@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Text Include="..\src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Main.cpp" />
+    <ClCompile Include="BaseApp.cpp" />
+    <ClCompile Include="SDK\Proton\FileSystem\FileManager.cpp" />
+    <ClCompile Include="SDK\Proton\FileSystem\StreamingInstance.cpp" />
+    <ClCompile Include="SDK\Proton\FileSystem\StreamingInstanceFile.cpp" />
+    <ClCompile Include="SDK\Proton\MiscUtils.cpp" />
+    <ClCompile Include="SDK\Proton\TextScanner.cpp" />
+    <ClCompile Include="SDK\Proton\Variant.cpp" />
+    <ClCompile Include="GrowConfig.cpp" />
+    <ClCompile Include="Items\ItemInfo.cpp" />
+    <ClCompile Include="Items\ItemInfoManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseApp.h" />
+    <ClInclude Include="SDK\TimeWrapper.h" />
+    <ClInclude Include="GrowConfig.h" />
+    <ClInclude Include="SDK\Proton\FileSystem\FileManager.h" />
+    <ClInclude Include="SDK\Proton\FileSystem\FileSystem.h" />
+    <ClInclude Include="SDK\Proton\FileSystem\StreamingInstance.h" />
+    <ClInclude Include="SDK\Proton\FileSystem\StreamingInstanceFile.h" />
+    <ClInclude Include="SDK\Proton\Math.h" />
+    <ClInclude Include="SDK\Proton\MiscUtils.h" />
+    <ClInclude Include="SDK\Proton\TextScanner.h" />
+    <ClInclude Include="SDK\Proton\Variant.h" />
+    <ClInclude Include="Items\Defs.h" />
+    <ClInclude Include="Items\ItemInfo.h" />
+    <ClInclude Include="Items\ItemInfoManager.h" />
+    <ClInclude Include="Packet\GameUpdatePacket.h" />
+  </ItemGroup>
+</Project>

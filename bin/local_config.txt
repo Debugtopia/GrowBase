@@ -1,0 +1,11 @@
+#config file for the specific servers loaded from this directory
+
+
+#tell the server where the world files are - can use multiple paths
+#add_world_path|basePath/mapdata|<worldID to start on>|<worldID to end on>
+#Note:  These MUST be listed in order starting at worldID 0. (it will check for safety)  The last path is assumed to go to "infinity".
+#Dirs must exist, it won't create it for you (for safety)
+add_world_path|mapdata|0|10000
+
+#if you uncomment below, it will give errors until you create mapdata2. The test below puts worlds between 20000 and 30000 in mapdata2
+add_world_path|mapdata2|0|20000

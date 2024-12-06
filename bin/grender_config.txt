@@ -1,0 +1,28 @@
+#Seth's config file for GRender
+
+#base addresses we listen on
+admin_port|4587
+
+sql_logon|root
+sql_password|
+sql_host|127.0.0.1
+
+world_process_delay_ms|800
+
+sql_db_name_to_use|growbase
+log_cache_timer|2000
+
+#needs trailing slash
+world_image_path|renders/
+
+#needs trailing slash
+holiday_frames_path|holiday_frames/
+
+#blank here, but on the server it's 
+game_graphic_path|
+
+#if 1, we check the Recycle var to be none 0 for recycled worlds instead of doing our own check
+quick_recycle_mode|1
+
+#enabling beta message below also enables all the BETA items!! So don't use on a non-beta server.  Disable to test without beta items
+enable_beta_message|`4Beta mode active ``- so beta_items.txt is also loaded.

@@ -1,0 +1,619 @@
+#Config file for GT server.  The # at the start denotes a comment, removing it makes it a command.
+ 
+#base addresses we listen on
+logon_port|16999
+base_port|17000
+admin_port|4587
+ 
+#Main user udp enet port is base_port+id
+#Logon communication tcpip port is base_port+1000+id (logon hits server at this port and maintains a connection)
+#Local admin telnet port for the sub-servers is base_port+2000+id (we can use this to look at a specific server directly)
+ 
+
+ 
+#if not set to blank, this server will run in beta mode.  You probably DON'T want that unless this is the beta server.  Beta mode shows this message on every logon and if it exists, will append the file beta_items.txt to the normal item_definitions.txt
+enable_beta_message|`4Beta mode active - so beta_items.txt is also loaded.
+ 
+
+ 
+#only add new apps at the end
+illegal_android_apps|cc.cz.madkite.freedom org.aqua.gg idv.aqua.bulldog com.cih.gamecih2 com.cih.gamecih com.cih.game_cih cn.maocai.gamekiller com.gmd.speedtime org.dax.attack com.x0.strai.frep com.x0.strai.free org.cheatengine.cegui org.sbtools.gamehack com.skgames.traffikrider org.sbtoods.gamehaca com.skype.ralder org.cheatengine.cegui.xx.multi1458919170111 com.prohiro.macro me.autotouch.autotouch com.cygery.repetitouch.free com.cygery.repetitouch.pro com.proziro.zacro com.slash.gamebuster
+ 
+
+
+#place to download rttex updates, it will add "cache/" by itself
+ 
+downloadServerURL|growtopia1.com
+downloadServerPath|cache/
+ 
+#use Amazon s3 account. If this breaks, comment it out and uncomment above to use the regular server.
+downloadServerURL|growtopia.s3-website-us-east-1.amazonaws.com
+ 
+#use Ubisoft's CDN
+#downloadServerURL|static2.ubi.com
+#downloadServerPath|gamesites/growtopia/
+ 
+#server sql info and logon credentials.  Now that sql_host is overwritten by the setting in local_config.txt if set
+sql_logon|root
+sql_password|
+sql_host|localhost
+sql_db_name_to_use|rtsoft_crap3
+ 
+max_grender_queue|50
+ 
+
+#these logons just mean talking to the server at all, includes connections that don't result in a user logon
+#max # of logons allowed at once to a logonhelper (no max is fine, so keep it high.  This doesn't mean they'll actually get to log on)
+max_logons_at_once|5000
+redu
+#same as above, but if the concurrent user count is above high_load_users (set below)
+max_logons_at_once_heavy_load|250
+ 
+#enable advanced world throttling (logon will stop users from using doors/warps if the dest is too busy.  Seems safe, but it could
+#let someone walk through a warp which could ruin some levels?  Unsure
+allow_world_move_throttling|1
+ 
+ 
+log_high_load_warnings|0
+ 
+#set to a high number to disable logging about this.  If a world sends more than this many packets per second, it's logged.  Use sh watch_server.sh to see these easily.
+max_sent_packets_per_world_per_second|25000
+ 
+#set below to 0 to disable it.  If this is reached, users will not be allowed to warp to this world.  They will get a "This server is too busy" message probably.
+max_sent_packets_per_second_to_close_world|17000
+ 
+#if set to 1, servers can move people to other busy servers themselves. If buggy, turn to 0 quick!  Can be enabled/disabled live
+#note: self transitioning means less work for logon, but won't stop server moves to lagged out servers as well
+#update: this is not safe to use, don't use it.
+use_self_transitioning|0
+ 
+#setting this to 1 will turn off "game generator" functionality across all servers, to be used if some serious bug was found with it
+disable_gamepack|0
+ 
+#allows two of the same kind of items dropped on top of eachother to merge into one item with the total item count, ie, stacking. Could be disabled if some bug was found.
+consolidate_drops|1
+ 
+#total number of clients that can be online.  Due to how user counts work the number shown to uses may be slightly higher though.  If the max is hit, people logging on will be told that X users is the max and to try again later.
+max_clients|1024
+ 
+ 
+#Settings for calculating ratings.  0 for none, 1 for all.  Was for debugging SQL load, 0 means no /rate commands are saved at all. 1 means store all /rate commands that user's do.
+set_ratings_percent_to_save|1
+#same as above but for calculating ratings.  Was used to debug performance issues.
+set_ratings_world_maint_to_do|1
+#World ratings disgard ratings that come from admins, normally a high number like 50 is ok.  0 would save on server/sql load.
+max_admins_to_process_for_alts|50
+#causes /rate commands to have more weight? Ask Hamumu
+ratings_percent_bonus|0
+ 
+#default max clients per world.  Note: This actually gets dynamically set based on player count every 10 minutes from /script/server_monitor.php on growtopiagame.com.  (this script also emails if the server is down)
+max_clients_per_world|65
+ 
+#non-world locks get deleted when punched if they are old enough.  6 months is good
+days_required_to_delete_lock|179
+ 
+ 
+ 
+#load balancing uses a "penalty" system to decide which servers should be passed loads.
+#the penality applied to servers with a high ratio of players to world so they get chosen less by logon.  0.15 is normal, 0 would mean no penalty
+logon_busy_ratio_tax|0.11
+ 
+#how much we care about the player/world ratio, 1 means a lot, 0.3 means much less, so it won't be paid as much attention to (and will get more players)
+player_world_rate_mod|0.4
+ 
+#autoholidays is like: "autoholidays|0110101" to enable each holiday individually.  The 0 means disabled, 1 is enabled. Use /eventinfo from telnet admin to see the order of events and verify which ones are enabled.
+autoholidays|11111111
+ 
+#All autoholidays can be disabled with this if a serious bug was found.
+autoholiday_system|1
+ 
+#settings for the "daily" challenge in seconds.  So 7220 mean daily challenges last 2 hours.  Repeated every 23 hours, so it eventually hits all timezones.
+challenge_duration|140
+challenge_wait|60
+ 
+#settings for the monthly "Locke" event, a little guy randomly appears in worlds every 600 seconds (10 minutes) and tells 500 people about it.
+locke_worldtime|600
+locke_broadcast|500
+ 
+#enables the world balance system for special event worlds, for example, if you go to CARNIVAL it will shuffle you off to CARNIVAL_12 or something if CARNIVAL is full. If a major bug was found this could be disabled.
+world_balance|1
+ 
+#Special event worlds that use the world balancer like CARNIVAL and WOLFWORLD, GROWCH, etc will auto import the entire world file from a .map file if needed. Should be on.
+auto_import|1
+ 
+#disables friend options, but doesn't kill the user updating, need to set below for that
+enable_friends|1
+ 
+#how often we update the friends list data based on who's online now.  A bigger number means less often but less mysql load.  Set to 0 to disable (friends list "who's online" won't be accurate, but will save on sql load)
+friend_update_interval_ms|10000
+ 
+#how many friends we process per interval to see who's online.  6000 is good.
+friend_update_users_per_interval|6000
+ 
+#Friends can "warp to friend".  1 for yes, 0 for disabled
+warp_to_friend_enabled|1
+ 
+#friend list settings. Requires restart to take effect.
+max_friends|200
+max_ignores|50
+ 
+ 
+#if the server is having sql/cpu issues, you can set this to 1 to disable showing accurate user counts on the "choose world" screen.  Setting to 2 also disable the /go and /rgo commands. (server moves are expensive)
+#setting to 0 means don't disable anything
+optimize_level|0
+ 
+#max we'll let enet loop per one loop cycle in ms.  Helps avoid a complete server resync if a server gets a huge backlog of packets for some reason.  (like if it froze for 20 seconds)
+enet_loop_timeout|7000
+ 
+#ANTI hack settings
+ 
+#Self reported distance from the item are attempting to pickup. 80 is safe, if a client reported higher than that, they are hacking.
+self_reported_dist_to_pickup_to_ban|80
+ 
+#ip bans - this lets us ban an IP from logging on.  Note: It's probably better to ban the host itself by editing ipcheck.sh (same dir as logon)
+#add_ip_range_ban|178.135.|major trainer maker, yeah it's too big, remove later
+ 
+ 
+#If the client sends too many "marked as soon as possible" packets in a short enough period, they are likely using a speed hack.  The settings below control the sensitivity of the 3 ban handed out.
+max_asap_per_ten_seconds|120
+asap_per_ten_seconds_to_ban|5000
+ 
+enable_spike_hack_detect_v3|0
+ 
+#if a user sends 28 packets while standing on a mushroom/bouncy, he must be hacking.
+packets_on_bouncy_at_same_y_to_ban|28
+ 
+#if a user punches too far in pixels, we know they are using a hacked client. (client self reports where are standing and the tile they are trying to punch)
+max_punch_pixels_before_ban|260
+ 
+#If a user stands on lava or spikes too long, we think they are hacking and will give them an automatical 2 month ban.
+lava_walks_to_ban|10
+spike_walks_to_ban|6
+ 
+ 
+#this seems broken, default is 10, setting way higher.  60 to be safer
+new_spike_hits_to_ban|20
+ 
+#if a user appears to be "floating" for no reason for more than X packets, this will log it.
+float_hack_check_count|15
+ 
+#after this many packets, we'll ban them for two months.
+float_hack_check_count_ban|24
+ 
+#if a user is moving faster than these numbers, we'll assume they are bouncing crazy between pinbals or physics are otherwise broken and we should ignore floating for now
+float_hack_max_speed_x|290
+float_hack_max_speed_y|20000000
+ 
+ 
+#was 3 and 8
+#like above but resets every 10 seconds instead of minute, and is only allowed to trigger a max of once per second
+ten_float_hack_check_count|3
+ten_float_hack_check_count_ban|8
+ 
+#if a user self reports a movement speed higher than this, they are hacking and we'll log or ban them based on settings below
+ban_movement_speeds_this_high|12000
+log_movement_speeds_this_high|11000
+ 
+#if a user reports himself to be in water, but there is no water on that tile, it could be a hack.  After 14 "hits" we'll ban them
+water_hack_check_to_ban|14
+water_hack_check_to_warn|4
+ 
+#if a user appears to punch too far from where he last was standing too many times, he is probably using a hacked client.  These settings allow us to auto ban fo rit.
+punch_dist_tiles_to_warn|100
+punch_dist_tiles_to_punish|8
+#the penalty weighting given to punching too far
+punch_dist_tiles_to_punish_amount|10
+ 
+#use A* to check the client's self-reported position at the time of the punch.  A hacked client will often be in an illegal spot he couldn't have gotten to
+punch_astar_active|1
+#log info if A* pathfinding fails by a long enough distance
+punch_astar_fail_dist_to_log|2000
+ 
+#penalty of suspicious hits it adds when Astar fails
+ 
+astar_failed_punish|2
+ghost_wall_clip_detection_hit_penalty|2
+ 
+on_solid_tile_ten_second_punish|1.5
+on_solid_tile_minute_punish|2
+ 
+#more false positives, but catches more stuff
+float_ignore_zeroes|1
+ten_float_ignore_zeroes|1
+ 
+ 
+#we treat "veteran players" with less strict anti-hack checks to reduce false positives
+hours_played_required_to_be_veteran|13.0
+suspicious_ten_vet_mult|1.5
+suspicious_vet_mult|2.0
+float_ten_hack_vet_mod|1.8
+ 
+#change this back to 1.7 or something later
+float_hack_vet_mod|2.8
+ 
+#the two below here are both "per ten seconds"
+suspicious_ten_second_hits_before_ban|11
+suspicious_ten_second_hits_before_log|5
+ 
+#the two below here are both "per minute"
+suspicious_hits_before_log|40
+suspicious_hits_before_ban|45
+ 
+max_world_pixels_per_movement_to_punish|700
+max_world_pixels_per_movement|300
+max_world_pixels_punish|1
+ 
+#If a client self-reports that the user did 3 double jumps, it must be a client hack.  These checks can be set to 0 to disable them
+double_jumps_to_log|3
+double_jumps_to_ban|3
+ 
+#in ms. logon and servers will gap out their log cache saves by splitting this up
+log_cache_timer|1000
+ 
+ 
+#how often sub servers flush their log to logon via tcpip
+logon_log_cache_timer|10000
+ 
+#if 1, we check the Recycle var to be none 0 for recycled worlds instead of doing our own check
+quick_recycle_mode|1
+ 
+#0 disabled astar-anti hack checks, 500 is normal
+max_astar_steps|300
+ 
+#how long infected people stay infected
+virus_seconds|90
+ 
+#how often we update stats, and check for orders
+order_process_delay|900
+ 
+#disable_store_item|zombie_pack
+ 
+max_rankings_to_track|1000
+max_wotds_to_track|2000
+ 
+world_process_delay_ms|200
+ 
+#control how often random events spawn
+spawn_min_seconds|720
+spawn_max_seconds|1250
+ 
+#how often we save, it does it in a smart way over 3-4 minutes so there is no lag
+auto_save_seconds|3600
+ 
+#how long we cache empty worlds in memory, longer means more mem usage but less disk access
+delayed_world_delete_time_ms|120000
+ 
+#block high fraud regions as needed, they can still do tapjoy
+#add_iap_country_block|android|kr
+#add_iap_country_block|android|ru
+ 
+min_distance_for_los_check|8
+min_distance_for_los_jump_back|20
+min_distance_for_los_hack_logging|30
+min_distance_for_door_entry_hack_logging|100
+ 
+#if a user has moved too far from his last position, we can jump him back to his last known position. 
+max_movement_before_forced_jump_back|18
+ 
+#If a user dies too often, he's probably using a hacked client so we ban.
+max_death_packets_before_ban|12
+ 
+#if a user is punching too often, he's probably using a speed hack or hacked clients
+max_punches_per_minute|300
+punches_per_minute_to_ban|400
+ 
+#if a user tries to use an item on something he isn't close enough to, we reject the packet. Setting too low is annoying for players that have severe lag though.
+max_distance_to_use_tile|10
+ 
+#if a client sends more than 400 packets per minute, log it
+max_movements_per_minute|400
+ 
+#if a client sends more than 550 packets in a minute, ban them, it must be a client speed hack
+movements_per_minute_to_ban|550
+ 
+#if a client's internal clock changes by too much during gameplay, we assume a speed hack is being used.  If it changes by A LOT, we assume it's daylight savings or something and do not ban
+max_clock_offset_allowed_before_warn_seconds|10
+max_clock_offset_allowed_before_ban_seconds|40
+ 
+ 
+#costs of /sb and /cb, per person reached
+broadcast_cost|0.60
+ 
+#cost of a /broadcast and how many users it reaches
+weak_broadcast_cost|300
+weak_broadcast_range|1000
+ 
+#no max, but if we wanted one we could set it here
+max_people_to_broadcast_to|0
+ 
+#don't allow people to broadcast more than once a minute, it helps reduce spam
+broadcast_cooldown_ms|60000
+ 
+#super duper broadcast settings, cost is growtokens, clicks are db clicks.  sdb_cost at 0 means disabled (50 is normal)
+#super duper broadcasts are rather annoying, so we disabled them for now.  Admins can still use the /sdb command though, although be careful, it could cause lag because it freaks people out and they all try to warp to the same
+#world for an hour.
+sdb_cost|0
+sdb_clicks|90
+ 
+ 
+#if for some reason you want to quickly make all IAP give more gems, setting this to 2.x will give double the gems. Not used for things like St. Patrick's event bonuses, the server handles those separately.  So this isn't
+#really used, but it could be
+global_iap_mod|1
+ 
+#on the "Choose world" screen, we ignore showing worlds than have too many users (they don't need discovery)
+client_cutoff_to_hide_busy_rooms|12
+ 
+#if a world is too crowded, let's not show the "X came in" and "X left" messages
+client_cutoff_to_hide_messages|16
+ 
+#version settings
+ 
+iphone_required_version|2.47
+iphone_latest_version|2.47
+ 
+android_required_version|2.47
+android_latest_version|2.47
+ 
+#we don't support webos, so we just set this to a high amount
+webos_required_version|11.18
+webos_latest_version|0.00
+ 
+windows_required_version|2.47
+windows_latest_version|2.47
+ 
+osx_required_version|2.47
+osx_latest_version|2.47
+ 
+ 
+#these settings control who can use the /beta command to get transferred to the beta server.  You also need to edit the beta server's settings to make sure they sort of match up
+version_required_for_beta|2.44
+#0 = all, #1 = mods/smods, #2 = smods
+access_level_required_for_beta|2
+hours_played_required_for_beta|800
+level_required_for_beta|20
+ 
+ 
+#one usd = how many tapjoy gems? This helps us keep correct records during sales. a 2x sale would be 14000 gems instead of 7000
+tapjoy_conversion_rate|7000
+#tapjoy_conversion_rate|14000
+ 
+emergency_shutdown_message|
+ 
+#uncomment below and you can run the server without anyone actually getting on, useful for some horrible catastrophy
+#emergency_shutdown_message|`5Anniversary Week`` is about to start! Can you believe it's been four years? Visit `5@growtopiagame`` on twitter while you wait!
+#emergency_shutdown_message|`5Oh no, Caching out some SQL stuff, we'll be back online in a few minutes.  Check twitter at @growtopiagame for updates!
+#emergency_shutdown_message|`5Oops, we're fixing an issue with a new Pet Battle skill.  We'll be back in 10 minutes or so, I hope! Check `5@growtopiagame`` on twitter while you wait!
+ 
+#holiday|
+holiday|valentines
+#holiday|apology
+#holiday|stpatricks
+ 
+#holiday|easter
+#easter uses effect_rate which is seconds between egg spawns
+#holiday_effect_rate|600
+ 
+#holiday|cinco
+ 
+#holiday|summer
+#300 seconds between fireworks spawns, 1% chance for fireworks to also spawn something cooler
+#holiday_effect_rate|300
+#holiday_percent_chance|10.0
+#holiday_rare_item_spawn_percent|32
+ 
+#holiday_percentchance is the chance that a cake is a balance cake
+#holiday|harvest
+#holiday_percent_chance|1
+ 
+#holiday|halloween
+holiday_effect_rate|20
+holiday_percent_chance|10
+max_growga_npcs|10
+ 
+#note: must restart server to end halloween
+ 
+#holiday|christmas
+#presents fed to growch on a server before it sends info to logon
+#holiday_effect_rate|100
+#seconds between present spawns
+#holiday_percent_chance|300
+ 
+#rarity donated by everyone in the world to make 1 toy be given ou
+#holiday_rare_item_spawn_percent|250000
+ 
+holiday|thanksgiving
+ 
+#players on a server required for it to spawn a goblin on that server
+min_players_for_goblin|50
+ 
+ 
+#holiday|anniversary
+#holidayPercentChance = odds of a tree spawning a skyrocket when you smash it.  This is multiplied by rarity, so like if you put 3, a rarity 7 tree would have 21%$
+#holiday_percent_chance|0.5
+ 
+#holiday|appreciation
+ 
+ 
+#holiday|pineapple
+#holiday_effect_rate|5000
+#holiday_percent_chance|200
+#holiday_rare_item_spawn_percent|1
+ 
+ 
+#setting this controls which music to play on the choose world menu
+#normal
+#set_choose_music|audio/mp3/about_theme.mp3
+ 
+#halloween theme
+#set_choose_music|audio/mp3/ykoops.mp3
+ 
+#spooky
+#set_choose_music|audio/mp3/unspeakable.mp3
+ 
+#carnival
+#set_choose_music|audio/mp3/funtime.mp3
+ 
+#winterfest theme
+#set_choose_music|audio/mp3/tsirhc.mp3
+ 
+#cinco theme
+#set_choose_music|audio/mp3/cumbia.mp3
+ 
+#harvest theme
+#set_choose_music|audio/mp3/theme3.mp3
+ 
+#firefighter theme
+#harvest theme
+#set_choose_music|audio/mp3/theme4.mp3
+ 
+#suspended theme for no reason
+#set_choose_music|audio/mp3/suspended.mp3
+ 
+ 
+comet_day|28
+comet_spawntime|300
+comet_antimatter_odds|1
+ 
+ 
+#if set to 1, we will not let anybody without a GID online.  (Google Advertising ID)  Old phones/android versions don't have this though.
+strict_gid_checks_on_android|0
+ 
+#if set to 1, we won't allow computers that doesn't seem to have a valid MAC online
+strict_mac_checks_on_win|0
+ 
+#if set to 1, we won't allow computers that don't report a SID online (this is a hash based on their windows serial #)
+strict_sid_checks_on_win|1
+ 
+#ghost options - ghosts are invisible monsters that sometimes spawn if a world isn't visited in a long time. Using spectral goggles players can see them and capture them.
+ 
+#capped at 50 internally, client limitation
+max_npcs|50
+ 
+#capped at 25 internally, more is a bad idea
+max_ghosts|25
+ 
+#1 means no change, 0.5 would mean half the ghosts, 0 would disable ghost spawning in old worlds completely
+ancient_ghost_spawn_mod|1
+ 
+#1 is always spawn ghosts in worlds not visited in 10+ days, 0 would be never. 0.5 would be 1/2 chance
+ancient_ghost_spawn_ratio|0.20
+ 
+ 
+#Fossils randomly spawn on certain kinds of rocks, these settings control how many spawn
+ 
+#don't start spawning fossils if a sub server doesn't have at least 4 worlds active
+min_worlds_for_fossil|4
+ 
+#How often a sub-server will spawn fossils in a world, in seconds.  setting to 0 disabled fossil spawns
+fossil_time|600
+ 
+#remove fossils from any world loaded. We used this a while back to fix a problem where we spawned way too many.  Don't use, leave at 0 to disable.
+clean_fossils|0
+ 
+ 
+#Tournament is a once a month event (autoholiday) that last 5 days, on the 7th of every month.  These are the settings.
+tournament_day_of_month|7
+ 
+#how many days the tournament lasts
+tournament_length|5
+ 
+#set to 0 to disable the tournament ticket buying and rewards
+allow_tournament|1
+ 
+#zombie day is an autoholiday event that happens when enough zombies infect people.  Roughly once a month or two
+ 
+#zombieday settings
+#how many infections happen on a server before the count is transmitted to logon to be added into the total
+infections_to_send|20
+ 
+#(how many zombie kills you get for doing a chemsynth puzzle)
+chemsynth_zombie_kills|100
+ 
+#(how many zombie kills total to end the pandemic)
+zombie_kills_to_win|3000000
+ 
+#(how many infections have to happen to lose the pandemic)
+infections_to_end_world|1000000
+ 
+#(how many zombie seeds will spawn before the apocalypse ends)
+zombie_seeds_for_apocalypse|128000
+ 
+#(how often servers broadcast the current zombie stats to all players during the holiday)
+seconds_to_update_zombie_news|300
+ 
+#how many infections are needed to start the pandemic
+infections_for_pandemic|5000000
+ 
+#how many seeds spawn for each player in a world
+zombie_seed_ratio|0.2
+ 
+#how many seconds between seed spawns
+seconds_to_spawn_zombie_seeds|600
+ 
+pinata_life|5
+turkey_life|50
+ 
+faction_war_enable|0
+faction_war_start_time|1514990403   
+faction_war_prep_phase_duration|0
+faction_war_attack_phase_duration|12000000
+faction_war_reward_claim_duration|10
+leaderboard_duration|100
+leaderboard_calculation_offset|2 
+ 
+faction_war_punch_guilds|Company|NoFreeload|Win|TheMajority|Diamond|Punch|Justice|Computer|Ever|Ninja
+faction_war_build_guilds|Rose|Saiyan|Queen|Christmas|Gotem|Destroy|Korea|RSP|Alliance|HellFireClan
+faction_war_grow_guilds|ANCIENTS|ChickenDinner|Friend|Extinct|Egg|Queens|Hex|INK|MENTAL|Swingers
+ 
+extra_gem_mul|1
+extra_gem_mul_chance|100
+ 
+grow_event_enable|1
+grow_event_start_time|1541134800
+grow_event_active_duration|259200
+grow_event_cooldown_duration|345600
+grow_activity_types|8,1,7,2,3,5,4,6
+ 
+ 
+# season progress 
+ 
+guild_season_progress_active_branch_size|4
+# active branch size shall not exceed max size 7
+ 
+#season_progress_season_index|1
+#season_progress_branch_is_cycle_0|1
+#season_progress_branch_is_cycle_1|1
+#season_progress_branch_is_cycle_2|1
+#season_progress_branch_is_cycle_3|1
+#season_progress_branch_is_cycle_4|0
+#season_progress_branch_dependency_2|5
+#season_progress_branch_dependency_3|5
+#season_progress_branch_dependency_4|0,1,2,3
+ 
+ 
+season_progress_season_index|2
+season_progress_branch_is_cycle_0|1
+season_progress_branch_is_cycle_1|1
+season_progress_branch_is_cycle_2|1
+season_progress_branch_is_cycle_3|0
+season_progress_branch_is_disable_1|0
+season_progress_branch_is_disable_2|0
+season_progress_branch_is_disable_3|1
+season_progress_branch_dependency_3|0,1,2
+ 
+weight_spam_trigger|50
+add_spam_filter_world|ABCD
+add_spam_filter_world|BUYWINGS
+ 
+weighted_actions|dialog_return
+weighted_actions|wrench
+weighted_actions|drop
+weighted_actions|trash
+weighted_actions|chaching
+weighted_actions|buy
+weighted_actions|eventmenu
+weighted_actions|dialog_return
+weighted_actions|join_request
+weighted_actions|world_button
+signatureBase64Key|zEa34aeZXQb0wOBY4fWiX5roTBtlRMIEnuBO4D0FI0o=
+encryptionBase64Key|70WNoiJkqCjMSj2qK+5CzQ==
