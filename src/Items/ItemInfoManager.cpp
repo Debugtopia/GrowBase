@@ -12,13 +12,16 @@ ItemInfoManager* GetItemInfoManager() { return &g_itemsManager; }
 
 ItemInfoManager::~ItemInfoManager()
 {
-    for (ItemInfo* pItem : m_items)
+    for (int i = 0; i < m_items.size(); i++)
     {
-        if (pItem)
+        ItemInfo* pItem = m_items[i];
+        if (pItem == NULL)
         {
-            // de-allocating the item
-            delete pItem;
+            continue;
         }
+
+        // de-allocating the item
+        delete pItem;
     }
 
     m_items.clear();
@@ -26,8 +29,9 @@ ItemInfoManager::~ItemInfoManager()
 
 ItemInfo* ItemInfoManager::GetItemByID(const uint16_t& ID)
 {
-    for (ItemInfo* pItem : m_items)
+    for (int i = 0; i < m_items.size(); i++)
     {
+        ItemInfo* pItem = m_items[i];
         if (pItem == NULL || pItem->ID != ID)
         {
             continue;
@@ -41,8 +45,9 @@ ItemInfo* ItemInfoManager::GetItemByID(const uint16_t& ID)
 
 ItemInfo* ItemInfoManager::GetItemByName(std::string fName)
 {
-    for (ItemInfo* pItem : m_items)
+    for (int i = 0; i < m_items.size(); i++)
     {
+        ItemInfo* pItem = m_items[i];
         if (pItem == NULL || pItem->name != fName)
         {
             continue;
@@ -798,7 +803,7 @@ bool ItemInfoManager::Load()
     }
 
     int lastID = 0;
-    std::vector<STR> lines = t.GetLines();
+    std::vector<nova_str> lines = t.GetLines();
     for (int i = 0; i < lines.size(); i++)
     {
         const std::string& line = lines[i];
@@ -807,7 +812,7 @@ bool ItemInfoManager::Load()
             continue;
         }
 
-        std::vector<STR> tokens = Utils::StringTokenize(line, "|");
+        std::vector<nova_str> tokens = Utils::StringTokenize(line, "|");
         if (tokens[0] == "add_item")
         {
             if (tokens.size() < 15)
@@ -838,31 +843,31 @@ bool ItemInfoManager::Load()
 
         if (tokens[0] == "setup_seed")
         {
-            if (tokens.size() < 12)
+            if (tokens.size() < 13)
             {
                 // failed to parse item
                 return false;
             }
 
-            ItemInfo* pItem = CreateSeedVersionOfLastAddedItem(lastID);
-            //seedBase|seedOver|treeBase|treeOver|seedColor|r,g,b,a|treeColor|r,g,b,a|seed1|seed2|bloomTime
-
-            pItem->seedBase = std::atoi(tokens[1].c_str());
-            pItem->seedOver = std::atoi(tokens[2].c_str());
-            pItem->treeBase = std::atoi(tokens[3].c_str());
-            pItem->treeOver = std::atoi(tokens[4].c_str());
-            std::vector<std::string> seedColor = Utils::StringTokenize(tokens[6], ",");
-            std::vector<std::string> treeColor = Utils::StringTokenize(tokens[8], ",");
+            ItemInfo* pItem = CreateSeedVersionOfLastAddedItem(std::atoi(tokens[1].c_str()) - 1);
+            pItem->seedBase = std::atoi(tokens[2].c_str());
+            pItem->seedOver = std::atoi(tokens[3].c_str());
+            pItem->treeBase = std::atoi(tokens[4].c_str());
+            pItem->treeOver = std::atoi(tokens[5].c_str());
+            std::vector<std::string> seedColor = Utils::StringTokenize(tokens[7], ",");
+            std::vector<std::string> treeColor = Utils::StringTokenize(tokens[9], ",");
             if (seedColor.size() < 4 || treeColor.size() < 4)
             {
+                // failed to parse seed/tree color
+                delete pItem;
                 return false;
             }
 
             pItem->seedColor = MAKE_RGBA(std::atoi(seedColor[0].c_str()), std::atoi(seedColor[1].c_str()), std::atoi(seedColor[2].c_str()), std::atoi(seedColor[3].c_str()));
             pItem->treeColor = MAKE_RGBA(std::atoi(seedColor[0].c_str()), std::atoi(seedColor[1].c_str()), std::atoi(seedColor[2].c_str()), std::atoi(seedColor[3].c_str()));
-            pItem->seed1 = std::atoi(tokens[9].c_str());
-            pItem->seed2 = std::atoi(tokens[10].c_str());
-            pItem->bloomTime = std::atoi(tokens[11].c_str());
+            pItem->seed1 = std::atoi(tokens[10].c_str());
+            pItem->seed2 = std::atoi(tokens[11].c_str());
+            pItem->bloomTime = std::atoi(tokens[12].c_str());
 
             lastID = pItem->ID;
             m_items.push_back(pItem);
@@ -899,20 +904,19 @@ bool ItemInfoManager::Load()
 
         if (tokens[0] == "set_extra_string")
         {
-            if (tokens.size() < 3)
+            if (tokens.size() < 5)
             {
                 return false;
             }
 
-            ItemInfo* pItem = GetItemByID(lastID);
+            ItemInfo* pItem = GetItemByID(std::atoi(tokens[1].c_str()));
             if (pItem == NULL)
             {
                 return false;
             }
 
-            pItem->animMS = std::atoi(tokens[1].c_str());
             pItem->textureExtra = tokens[2];
-            pItem->textureExtraHash = std::atoi(tokens[3].c_str());
+            pItem->animMS = std::atoi(tokens[4].c_str());
         }
 
         if (tokens[0] == "set_flags")
@@ -1068,7 +1072,7 @@ bool ItemInfoManager::Load()
                 return false;
             }
 
-            std::vector<STR> data = Utils::StringTokenize(tokens[1], ",");
+            std::vector<nova_str> data = Utils::StringTokenize(tokens[1], ",");
             if (data.size() != 60)
             {
                 return false;
@@ -1088,7 +1092,7 @@ bool ItemInfoManager::Load()
                 return false;
             }
 
-            std::vector<STR> parts = Utils::StringTokenize(tokens[1], ",");
+            std::vector<nova_str> parts = Utils::StringTokenize(tokens[1], ",");
             if (parts.size() != 9)
             {
                 return false;
@@ -1311,13 +1315,13 @@ bool ItemInfoManager::LoadFile()
         return false;
     }
 
-    char __ptr pCharData = f.GetAsChars();
+    char *pCharData = f.GetAsChars();
     int size = f.GetSize();
     int offset = 0;
 
     m_data = std::vector<char>(pCharData, pCharData + size);
     m_hash = Utils::HashString(pCharData, size);
-    U8 __ptr pMem = reinterpret_cast<U8 __ptr>(m_data.data());
+    u8 *pMem = reinterpret_cast<u8*>(m_data.data());
 
     MemorySerializeRaw(m_version, pMem, offset, false);
     MemorySerializeRaw(m_itemCount, pMem, offset, false);
@@ -1325,7 +1329,7 @@ bool ItemInfoManager::LoadFile()
     std::ofstream o("enum.txt");
     for (int i = 0; i < m_itemCount; i++)
     {
-        ItemInfo __ptr pItem = new ItemInfo();
+        ItemInfo *pItem = new ItemInfo();
         pItem->SerializeFromMem(m_version, pMem, offset);
         if (i != pItem->ID)
         {
@@ -1350,7 +1354,7 @@ bool ItemInfoManager::LoadFile()
     }
 
     o.close();
-    m_pUpdatePacket = (GameUpdatePacket __ptr)std::malloc(sizeof(GameUpdatePacket) + size);
+    m_pUpdatePacket = (GameUpdatePacket*)std::malloc(sizeof(GameUpdatePacket) + size);
     if (m_pUpdatePacket == NULL)
     {
         return false;
@@ -1361,11 +1365,58 @@ bool ItemInfoManager::LoadFile()
     m_pUpdatePacket->netID = -1;
     m_pUpdatePacket->flags |= NET_GAME_PACKET_FLAG_EXTENDED;
     m_pUpdatePacket->dataLength = size;
-    memcpy(&m_pUpdatePacket->data, pCharData, size);
+    nova_memcopy(&m_pUpdatePacket->data, pCharData, size, offset);
 
     LogMsg("loaded items from binary file(v%d).", m_version);
     DumpItemDefinitions();
     return true;
+}
+
+void ItemInfoManager::Serialize(const uint16_t& version)
+{
+    size_t itemsDataLen = 6;
+    for (int i = 0; i < m_items.size(); i++)
+    {
+        ItemInfo* pItem = m_items[i];
+        if (pItem == NULL)
+        {
+            continue;
+        }
+
+        itemsDataLen += pItem->GetMemoryEstimated(version);
+    }
+
+    int offsetIn = 0;
+    uint16_t ver = version;
+    int items = (int)m_items.size();
+
+    m_pUpdatePacket = (GameUpdatePacket*)std::malloc(sizeof(GameUpdatePacket) + itemsDataLen);
+    if (m_pUpdatePacket == NULL)
+    {
+        return;
+    }
+
+    std::memset(m_pUpdatePacket, 0, sizeof(GameUpdatePacket) + itemsDataLen);
+    m_pUpdatePacket->type = NET_GAME_PACKET_SEND_ITEM_DATABASE_DATA;
+    m_pUpdatePacket->netID = -1;
+    m_pUpdatePacket->flags |= NET_GAME_PACKET_FLAG_EXTENDED;
+    m_pUpdatePacket->dataLength = (uint32_t)itemsDataLen;
+
+    MemorySerializeRaw(ver, m_pUpdatePacket->data, offsetIn, true);
+    MemorySerializeRaw(items, m_pUpdatePacket->data, offsetIn, true);
+    for (int i = 0; i < m_items.size(); i++)
+    {
+        ItemInfo* pItem = m_items[i];
+        if (pItem == NULL)
+        {
+            continue;
+        }
+
+        pItem->SerializeToMem(version, m_pUpdatePacket->data, offsetIn);
+    }
+
+    m_hash = Utils::HashString(m_pUpdatePacket->data, (uint32_t)itemsDataLen);
+    LogMsg("serializing items data for V%d completed, hash: %d", version, m_hash);
 }
 
 void ItemInfoManager::DumpItemDefinitions()
@@ -1379,9 +1430,10 @@ void ItemInfoManager::DumpItemDefinitions()
 
     defs << "#add_item|tileID|name|eItemType|soundType|eVisualType|eTileStorage|textureX|textureY|texture|textureHash|layer|eTileCollision|hardness|regenTime|\n";
     defs << "#add_clothes|tileID|name|eItemType|soundType|eVisualType|eTileStorage|textureX|textureY|texture|textureHash|eClothingType|\n";
+    defs << "#setup_seed|tileID|seedBase|seedOver|treeBase|treeOver|seed_color|r,g,b,a|treeColor|r,g,b,a|seed1|seed2|bloomTime|\n";
     defs << "#set_flags|FLAG |FLAG1 |FLAG2 |FLAG3 |\n";
     defs << "#set_cook|cookingTime|\n";
-    defs << "#set_extra_string|animMS|extraTexture|extraTextureHash|\n";
+    defs << "#set_extra_string|tileID|extraTexture|anim_ms|<animMS>|\n";
     defs << "#force_rarity|rarity|\n";
     defs << "#set_max_count|count|\n";
     defs << "#set_pet_info|petName|petPrefix|petSuffix|petAbility|\n";
@@ -1405,72 +1457,48 @@ void ItemInfoManager::DumpItemDefinitions()
     defs << "#link_playmod|playmodID|\n";
     defs << "\n\n\n";
 
-    for (ItemInfo* pItem : m_items)
+    for (int i = 0; i < m_items.size(); i++)
     {
-        std::string type = "add_item";
+        ItemInfo* pItem = m_items[i];
+        if (pItem == NULL)
+        {
+            continue;
+        }
+
         if (pItem->type == TYPE_SEED)
-        {
-            type = "setup_seed";
-        }
-
-        if (pItem->type == TYPE_CLOTHES)
-        {
-            type = "add_clothes";
-        }
-
-        if (type == "add_item")
-        {
-            defs << "add_item|" + std::to_string((int)pItem->ID) + "|" + pItem->name + "|" + ItemTypeToString(pItem->type) + "|" + std::to_string((int)pItem->soundType) + "|" + TileVisualEffectToString(pItem->visualType) + "|" + TileStorageToString(pItem->tileStorage) + "|" + std::to_string((int)pItem->textureX) + "|" + std::to_string((int)pItem->textureY) + "|" + pItem->texture + "|" + std::to_string((int)pItem->textureHash) + "|" + std::to_string((int)pItem->layer) + "|" + TileCollisionToString(pItem->tileCollision) + "|" + std::to_string((int)pItem->hardness) + "|" + std::to_string((int)pItem->regenTime) + "|\n";
-        }
-
-        if (type == "add_clothes")
-        {
-            defs << "add_clothes|" + std::to_string((int)pItem->ID) + "|" + pItem->name + "|" + ItemTypeToString(pItem->type) + "|" + std::to_string((int)pItem->soundType) + "|" + TileVisualEffectToString(pItem->visualType) + "|" + TileStorageToString(pItem->tileStorage) + "|" + std::to_string((int)pItem->textureX) + "|" + std::to_string((int)pItem->textureY) + "|" + pItem->texture + "|" + std::to_string((int)pItem->textureHash) + "|" + std::to_string((int)pItem->bodyPart) + "|\n";
-        }
-
-        if (type == "setup_seed")
         {
             std::string seedRGBA = std::to_string((int)GET_RED(pItem->seedColor)) + "," + std::to_string((int)GET_GREEN(pItem->seedColor)) + "," + std::to_string((int)GET_BLUE(pItem->seedColor)) + "," + std::to_string((int)GET_ALPHA(pItem->seedColor));
             std::string treeRGBA = std::to_string((int)GET_RED(pItem->treeColor)) + "," + std::to_string((int)GET_GREEN(pItem->treeColor)) + "," + std::to_string((int)GET_BLUE(pItem->treeColor)) + "," + std::to_string((int)GET_ALPHA(pItem->treeColor));
-            defs << "setup_seed|" + std::to_string((int)pItem->seedBase) + "|" + std::to_string((int)pItem->seedOver) + "|" + std::to_string((int)pItem->treeBase) + "|" + std::to_string((int)pItem->treeOver) + "|seedColor|" + seedRGBA + "|treeColor|" + treeRGBA + "|" + std::to_string((int)pItem->seed1) + "|" + std::to_string((int)pItem->seed2) + "|" + std::to_string((int)pItem->bloomTime) + "|\n";
+            defs << "setup_seed|" + std::to_string((int)pItem->ID) + "|" + std::to_string((int)pItem->seedBase) + "|" + std::to_string((int)pItem->seedOver) + "|" + std::to_string((int)pItem->treeBase) + "|" + std::to_string((int)pItem->treeOver) + "|seedColor|" + seedRGBA + "|treeColor|" + treeRGBA + "|" + std::to_string((int)pItem->seed1) + "|" + std::to_string((int)pItem->seed2) + "|" + std::to_string((int)pItem->bloomTime) + "|\n";
+        }
+        else if (pItem->type == TYPE_CLOTHES)
+        {
+            defs << "add_clothes|" + std::to_string((int)pItem->ID) + "|" + pItem->name + "|" + ItemTypeToString(pItem->type) + "|" + std::to_string((int)pItem->soundType) + "|" + TileVisualEffectToString(pItem->visualType) + "|" + TileStorageToString(pItem->tileStorage) + "|" + std::to_string((int)pItem->textureX) + "|" + std::to_string((int)pItem->textureY) + "|" + pItem->texture + "|" + std::to_string((int)pItem->textureHash) + "|" + std::to_string((int)pItem->bodyPart) + "|\n";
+        }
+        else
+        {
+            defs << "add_item|" + std::to_string((int)pItem->ID) + "|" + pItem->name + "|" + ItemTypeToString(pItem->type) + "|" + std::to_string((int)pItem->soundType) + "|" + TileVisualEffectToString(pItem->visualType) + "|" + TileStorageToString(pItem->tileStorage) + "|" + std::to_string((int)pItem->textureX) + "|" + std::to_string((int)pItem->textureY) + "|" + pItem->texture + "|" + std::to_string((int)pItem->textureHash) + "|" + std::to_string((int)pItem->layer) + "|" + TileCollisionToString(pItem->tileCollision) + "|" + std::to_string((int)pItem->hardness) + "|" + std::to_string((int)pItem->regenTime) + "|\n";
         }
 
         if (pItem->editableTypes != 0)
         {
             std::string bits = "";
-
-            if (pItem->editableTypes & FLIPPED)
-                bits.append(ItemFlagToString(FLIPPED) + "|");
-            if (pItem->editableTypes & EDITABLE)
-                bits.append(ItemFlagToString(EDITABLE) + "|");
-            if (pItem->editableTypes & SEEDLESS)
-                bits.append(ItemFlagToString(SEEDLESS) + "|");
-            if (pItem->editableTypes & PERMANENT)
-                bits.append(ItemFlagToString(PERMANENT) + "|");
-            if (pItem->editableTypes & DROPLESS)
-                bits.append(ItemFlagToString(DROPLESS) + "|");
-            if (pItem->editableTypes & NOSELF)
-                bits.append(ItemFlagToString(NOSELF) + "|");
-            if (pItem->editableTypes & NOSHADOW)
-                bits.append(ItemFlagToString(NOSHADOW) + "|");
-            if (pItem->editableTypes & WORLD_LOCK)
-                bits.append(ItemFlagToString(WORLD_LOCK) + "|");
-            if (pItem->editableTypes & BETA)
-                bits.append(ItemFlagToString(BETA) + "|");
-            if (pItem->editableTypes & AUTOPICKUP)
-                bits.append(ItemFlagToString(AUTOPICKUP) + "|");
-            if (pItem->editableTypes & MOD)
-                bits.append(ItemFlagToString(MOD) + "|");
-            if (pItem->editableTypes & RANDGROW)
-                bits.append(ItemFlagToString(RANDGROW) + "|");
-            if (pItem->editableTypes & PUBLIC)
-                bits.append(ItemFlagToString(PUBLIC) + "|");
-            if (pItem->editableTypes & FOREGROUND)
-                bits.append(ItemFlagToString(FOREGROUND) + "|");
-            if (pItem->editableTypes & HOLIDAY)
-                bits.append(ItemFlagToString(HOLIDAY) + "|");
-            if (pItem->editableTypes & UNTRADEABLE)
-                bits.append(ItemFlagToString(UNTRADEABLE) + "|");
+            if (pItem->editableTypes & FLIPPED) bits.append(ItemFlagToString(FLIPPED) + "|");
+            if (pItem->editableTypes & EDITABLE) bits.append(ItemFlagToString(EDITABLE) + "|");
+            if (pItem->editableTypes & SEEDLESS) bits.append(ItemFlagToString(SEEDLESS) + "|");
+            if (pItem->editableTypes & PERMANENT) bits.append(ItemFlagToString(PERMANENT) + "|");
+            if (pItem->editableTypes & DROPLESS) bits.append(ItemFlagToString(DROPLESS) + "|");
+            if (pItem->editableTypes & NOSELF) bits.append(ItemFlagToString(NOSELF) + "|");
+            if (pItem->editableTypes & NOSHADOW) bits.append(ItemFlagToString(NOSHADOW) + "|");
+            if (pItem->editableTypes & WORLD_LOCK) bits.append(ItemFlagToString(WORLD_LOCK) + "|");
+            if (pItem->editableTypes & BETA) bits.append(ItemFlagToString(BETA) + "|");
+            if (pItem->editableTypes & AUTOPICKUP) bits.append(ItemFlagToString(AUTOPICKUP) + "|");
+            if (pItem->editableTypes & MOD) bits.append(ItemFlagToString(MOD) + "|");
+            if (pItem->editableTypes & RANDGROW) bits.append(ItemFlagToString(RANDGROW) + "|");
+            if (pItem->editableTypes & PUBLIC) bits.append(ItemFlagToString(PUBLIC) + "|");
+            if (pItem->editableTypes & FOREGROUND) bits.append(ItemFlagToString(FOREGROUND) + "|");
+            if (pItem->editableTypes & HOLIDAY) bits.append(ItemFlagToString(HOLIDAY) + "|");
+            if (pItem->editableTypes & UNTRADEABLE) bits.append(ItemFlagToString(UNTRADEABLE) + "|");
 
             defs << std::format("set_flags|{}\n", bits);
         }
@@ -1480,13 +1508,12 @@ void ItemInfoManager::DumpItemDefinitions()
             defs << std::format("set_cook|{}|\n", (int)pItem->cookingTime);
         }
 
-        if (!pItem->textureExtra.empty() || pItem->animMS != 400 || pItem->textureExtraHash != 0)
+        if (!pItem->textureExtra.empty() || pItem->animMS != 400)
         {
-            defs << "set_extra_string|" + std::to_string((int)pItem->animMS) + "|" + pItem->textureExtra + "|" + std::to_string((int)pItem->textureExtraHash) + "|\n";
+            defs << "set_extra_string|" + std::to_string(pItem->ID) + "|" + pItem->textureExtra + "|anim_ms|" + std::to_string((int)pItem->animMS) + "|\n";
         }
 
         defs << std::format("force_rarity|{}|\n", (int)pItem->rarity);
-
         if (pItem->maxCount != 200)
         {
             defs << std::format("set_max_count|{}|\n", (int)pItem->maxCount);
@@ -1510,57 +1537,31 @@ void ItemInfoManager::DumpItemDefinitions()
         if (pItem->flags != 0)
         {
             std::string bits = "";
-
-            if (pItem->flags & ROBOT_DEADLY)
-                bits.append(ItemFlag2ToString(ROBOT_DEADLY) + "|");
-            if (pItem->flags & ROBOT_SHOOT_LEFT)
-                bits.append(ItemFlag2ToString(ROBOT_SHOOT_LEFT) + "|");
-            if (pItem->flags & ROBOT_SHOOT_RIGHT)
-                bits.append(ItemFlag2ToString(ROBOT_SHOOT_RIGHT) + "|");
-            if (pItem->flags & ROBOT_SHOOT_DOWN)
-                bits.append(ItemFlag2ToString(ROBOT_SHOOT_DOWN) + "|");
-            if (pItem->flags & ROBOT_SHOOT_UP)
-                bits.append(ItemFlag2ToString(ROBOT_SHOOT_UP) + "|");
-            if (pItem->flags & ROBOT_CAN_SHOOT)
-                bits.append(ItemFlag2ToString(ROBOT_CAN_SHOOT) + "|");
-            if (pItem->flags & ROBOT_LAVA)
-                bits.append(ItemFlag2ToString(ROBOT_LAVA) + "|");
-            if (pItem->flags & ROBOT_POINTY)
-                bits.append(ItemFlag2ToString(ROBOT_POINTY) + "|");
-            if (pItem->flags & ROBOT_SHOOT_DEADLY)
-                bits.append(ItemFlag2ToString(ROBOT_SHOOT_DEADLY) + "|");
-            if (pItem->flags & GUILD_ITEM)
-                bits.append(ItemFlag2ToString(GUILD_ITEM) + "|");
-            if (pItem->flags & GUILD_FLAG)
-                bits.append(ItemFlag2ToString(GUILD_FLAG) + "|");
-            if (pItem->flags & STARSHIP_HELP)
-                bits.append(ItemFlag2ToString(STARSHIP_HELP) + "|");
-            if (pItem->flags & STARSHIP_REACTOR)
-                bits.append(ItemFlag2ToString(STARSHIP_REACTOR) + "|");
-            if (pItem->flags & STARSHIP_VIEWSCREEN)
-                bits.append(ItemFlag2ToString(STARSHIP_VIEWSCREEN) + "|");
-            if (pItem->flags & SUPERMOD)
-                bits.append(ItemFlag2ToString(SUPERMOD) + "|");
-            if (pItem->flags & TILE_DEADLY_IF_ON)
-                bits.append(ItemFlag2ToString(TILE_DEADLY_IF_ON) + "|");
-            if (pItem->flags & LONG_HAND_ITEM)
-                bits.append(ItemFlag2ToString(LONG_HAND_ITEM) + "|");
-            if (pItem->flags & GEMLESS)
-                bits.append(ItemFlag2ToString(GEMLESS) + "|");
-            if (pItem->flags & TRANSMUTABLE)
-                bits.append(ItemFlag2ToString(TRANSMUTABLE) + "|");
-            if (pItem->flags & DUNGEON_ITEM)
-                bits.append(ItemFlag2ToString(DUNGEON_ITEM) + "|");
-            if (pItem->flags & PVE_MELEE)
-                bits.append(ItemFlag2ToString(PVE_MELEE) + "|");
-            if (pItem->flags & PVE_RANGED)
-                bits.append(ItemFlag2ToString(PVE_RANGED) + "|");
-            if (pItem->flags & PVE_AUTO_AIM)
-                bits.append(ItemFlag2ToString(PVE_AUTO_AIM) + "|");
-            if (pItem->flags & ONE_IN_WORLD)
-                bits.append(ItemFlag2ToString(ONE_IN_WORLD) + "|");
-            if (pItem->flags & ONLY_FOR_WORLD_OWNER)
-                bits.append(ItemFlag2ToString(ONLY_FOR_WORLD_OWNER) + "|");
+            if (pItem->flags & ROBOT_DEADLY) bits.append(ItemFlag2ToString(ROBOT_DEADLY) + "|");
+            if (pItem->flags & ROBOT_SHOOT_LEFT) bits.append(ItemFlag2ToString(ROBOT_SHOOT_LEFT) + "|");
+            if (pItem->flags & ROBOT_SHOOT_RIGHT) bits.append(ItemFlag2ToString(ROBOT_SHOOT_RIGHT) + "|");
+            if (pItem->flags & ROBOT_SHOOT_DOWN) bits.append(ItemFlag2ToString(ROBOT_SHOOT_DOWN) + "|");
+            if (pItem->flags & ROBOT_SHOOT_UP) bits.append(ItemFlag2ToString(ROBOT_SHOOT_UP) + "|");
+            if (pItem->flags & ROBOT_CAN_SHOOT) bits.append(ItemFlag2ToString(ROBOT_CAN_SHOOT) + "|");
+            if (pItem->flags & ROBOT_LAVA) bits.append(ItemFlag2ToString(ROBOT_LAVA) + "|");
+            if (pItem->flags & ROBOT_POINTY) bits.append(ItemFlag2ToString(ROBOT_POINTY) + "|");
+            if (pItem->flags & ROBOT_SHOOT_DEADLY) bits.append(ItemFlag2ToString(ROBOT_SHOOT_DEADLY) + "|");
+            if (pItem->flags & GUILD_ITEM) bits.append(ItemFlag2ToString(GUILD_ITEM) + "|");
+            if (pItem->flags & GUILD_FLAG) bits.append(ItemFlag2ToString(GUILD_FLAG) + "|");
+            if (pItem->flags & STARSHIP_HELP) bits.append(ItemFlag2ToString(STARSHIP_HELP) + "|");
+            if (pItem->flags & STARSHIP_REACTOR) bits.append(ItemFlag2ToString(STARSHIP_REACTOR) + "|");
+            if (pItem->flags & STARSHIP_VIEWSCREEN) bits.append(ItemFlag2ToString(STARSHIP_VIEWSCREEN) + "|");
+            if (pItem->flags & SUPERMOD) bits.append(ItemFlag2ToString(SUPERMOD) + "|");
+            if (pItem->flags & TILE_DEADLY_IF_ON) bits.append(ItemFlag2ToString(TILE_DEADLY_IF_ON) + "|");
+            if (pItem->flags & LONG_HAND_ITEM) bits.append(ItemFlag2ToString(LONG_HAND_ITEM) + "|");
+            if (pItem->flags & GEMLESS) bits.append(ItemFlag2ToString(GEMLESS) + "|");
+            if (pItem->flags & TRANSMUTABLE) bits.append(ItemFlag2ToString(TRANSMUTABLE) + "|");
+            if (pItem->flags & DUNGEON_ITEM) bits.append(ItemFlag2ToString(DUNGEON_ITEM) + "|");
+            if (pItem->flags & PVE_MELEE) bits.append(ItemFlag2ToString(PVE_MELEE) + "|");
+            if (pItem->flags & PVE_RANGED) bits.append(ItemFlag2ToString(PVE_RANGED) + "|");
+            if (pItem->flags & PVE_AUTO_AIM) bits.append(ItemFlag2ToString(PVE_AUTO_AIM) + "|");
+            if (pItem->flags & ONE_IN_WORLD) bits.append(ItemFlag2ToString(ONE_IN_WORLD) + "|");
+            if (pItem->flags & ONLY_FOR_WORLD_OWNER) bits.append(ItemFlag2ToString(ONLY_FOR_WORLD_OWNER) + "|");
 
             defs << std::format("set_flags2|{}\n", bits);
         }
@@ -1573,7 +1574,6 @@ void ItemInfoManager::DumpItemDefinitions()
 
         v9.resize(v9.size() - 1);
         defs << "set_client_data|" + v9 + "\n";
-
         if (pItem->tileRange != 0)
         {
             defs << "tile_range|" + std::to_string((int)pItem->tileRange) + "|\n";
@@ -1592,49 +1592,27 @@ void ItemInfoManager::DumpItemDefinitions()
         if (pItem->fxFlags != 0)
         {
             std::string fxBits = "";
-
-            if (pItem->fxFlags & MULTI_ANIM_START)
-                fxBits.append(ItemFxFlagToString(MULTI_ANIM_START) + "|");
-            if (pItem->fxFlags & PING_PONG_ANIM)
-                fxBits.append(ItemFxFlagToString(PING_PONG_ANIM) + "|");
-            if (pItem->fxFlags & OVERLAY_OBJECT)
-                fxBits.append(ItemFxFlagToString(OVERLAY_OBJECT) + "|");
-            if (pItem->fxFlags & OFFSET_UP)
-                fxBits.append(ItemFxFlagToString(OFFSET_UP) + "|");
-            if (pItem->fxFlags & DUAL_LAYER)
-                fxBits.append(ItemFxFlagToString(DUAL_LAYER) + "|");
-            if (pItem->fxFlags & MULTI_ANIM2_START)
-                fxBits.append(ItemFxFlagToString(MULTI_ANIM2_START) + "|");
-            if (pItem->fxFlags & UNK_0x40)
-                fxBits.append(ItemFxFlagToString(UNK_0x40) + "|");
-            if (pItem->fxFlags & USE_SKIN_TINT)
-                fxBits.append(ItemFxFlagToString(USE_SKIN_TINT) + "|");
-            if (pItem->fxFlags & SEED_TINT_LAYER1)
-                fxBits.append(ItemFxFlagToString(SEED_TINT_LAYER1) + "|");
-            if (pItem->fxFlags & SEED_TINT_LAYER2)
-                fxBits.append(ItemFxFlagToString(SEED_TINT_LAYER2) + "|");
-            if (pItem->fxFlags & RAINBOW_TINT_LAYER1)
-                fxBits.append(ItemFxFlagToString(RAINBOW_TINT_LAYER1) + "|");
-            if (pItem->fxFlags & RAINBOW_TINT_LAYER2)
-                fxBits.append(ItemFxFlagToString(RAINBOW_TINT_LAYER2) + "|");
-            if (pItem->fxFlags & GLOW)
-                fxBits.append(ItemFxFlagToString(GLOW) + "|");
-            if (pItem->fxFlags & NO_ARMS)
-                fxBits.append(ItemFxFlagToString(NO_ARMS) + "|");
-            if (pItem->fxFlags & FRONT_ARM_PUNCH)
-                fxBits.append(ItemFxFlagToString(FRONT_ARM_PUNCH) + "|");
-            if (pItem->fxFlags & RENDER_OFFHAND)
-                fxBits.append(ItemFxFlagToString(RENDER_OFFHAND) + "|");
-            if (pItem->fxFlags & SLOWFALL_OBJECT)
-                fxBits.append(ItemFxFlagToString(SLOWFALL_OBJECT) + "|");
-            if (pItem->fxFlags & REPLACEMENT_SPRITE)
-                fxBits.append(ItemFxFlagToString(REPLACEMENT_SPRITE) + "|");
-            if (pItem->fxFlags & ORB_FLOAT)
-                fxBits.append(ItemFxFlagToString(ORB_FLOAT) + "|");
-            if (pItem->fxFlags & UNK_0x80000)
-                fxBits.append(ItemFxFlagToString(UNK_0x80000) + "|");
-            if (pItem->fxFlags & RENDER_FX_VARIANT_VERSION)
-                fxBits.append(ItemFxFlagToString(RENDER_FX_VARIANT_VERSION) + "|");
+            if (pItem->fxFlags & MULTI_ANIM_START) fxBits.append(ItemFxFlagToString(MULTI_ANIM_START) + "|");
+            if (pItem->fxFlags & PING_PONG_ANIM) fxBits.append(ItemFxFlagToString(PING_PONG_ANIM) + "|");
+            if (pItem->fxFlags & OVERLAY_OBJECT) fxBits.append(ItemFxFlagToString(OVERLAY_OBJECT) + "|");
+            if (pItem->fxFlags & OFFSET_UP) fxBits.append(ItemFxFlagToString(OFFSET_UP) + "|");
+            if (pItem->fxFlags & DUAL_LAYER) fxBits.append(ItemFxFlagToString(DUAL_LAYER) + "|");
+            if (pItem->fxFlags & MULTI_ANIM2_START) fxBits.append(ItemFxFlagToString(MULTI_ANIM2_START) + "|");
+            if (pItem->fxFlags & UNK_0x40) fxBits.append(ItemFxFlagToString(UNK_0x40) + "|");
+            if (pItem->fxFlags & USE_SKIN_TINT) fxBits.append(ItemFxFlagToString(USE_SKIN_TINT) + "|");
+            if (pItem->fxFlags & SEED_TINT_LAYER1) fxBits.append(ItemFxFlagToString(SEED_TINT_LAYER1) + "|");
+            if (pItem->fxFlags & SEED_TINT_LAYER2) fxBits.append(ItemFxFlagToString(SEED_TINT_LAYER2) + "|");
+            if (pItem->fxFlags & RAINBOW_TINT_LAYER1) fxBits.append(ItemFxFlagToString(RAINBOW_TINT_LAYER1) + "|");
+            if (pItem->fxFlags & RAINBOW_TINT_LAYER2) fxBits.append(ItemFxFlagToString(RAINBOW_TINT_LAYER2) + "|");
+            if (pItem->fxFlags & GLOW) fxBits.append(ItemFxFlagToString(GLOW) + "|");
+            if (pItem->fxFlags & NO_ARMS) fxBits.append(ItemFxFlagToString(NO_ARMS) + "|");
+            if (pItem->fxFlags & FRONT_ARM_PUNCH) fxBits.append(ItemFxFlagToString(FRONT_ARM_PUNCH) + "|");
+            if (pItem->fxFlags & RENDER_OFFHAND) fxBits.append(ItemFxFlagToString(RENDER_OFFHAND) + "|");
+            if (pItem->fxFlags & SLOWFALL_OBJECT) fxBits.append(ItemFxFlagToString(SLOWFALL_OBJECT) + "|");
+            if (pItem->fxFlags & REPLACEMENT_SPRITE) fxBits.append(ItemFxFlagToString(REPLACEMENT_SPRITE) + "|");
+            if (pItem->fxFlags & ORB_FLOAT) fxBits.append(ItemFxFlagToString(ORB_FLOAT) + "|");
+            if (pItem->fxFlags & UNK_0x80000) fxBits.append(ItemFxFlagToString(UNK_0x80000) + "|");
+            if (pItem->fxFlags & RENDER_FX_VARIANT_VERSION) fxBits.append(ItemFxFlagToString(RENDER_FX_VARIANT_VERSION) + "|");
 
             defs << std::format("set_fx_flags|{}\n", fxBits);
         }
@@ -1647,7 +1625,6 @@ void ItemInfoManager::DumpItemDefinitions()
 
         parts.resize(parts.size() - 1);
         defs << "body_parts|" + parts + "\n";
-
         if (pItem->clockDivider != 0)
         {
             defs << "set_clock|" + std::to_string((int)pItem->clockDivider) + "|\n";
@@ -1698,4 +1675,45 @@ void ItemInfoManager::DumpItemDefinitions()
 
     defs.close();
     LogMsg("dumped item_definitions.txt to dumps/");
+
+    std::vector<nova_str> dumped_hashes;
+    std::fstream hashes("dumps/file_hashes.txt", std::ios::out);
+    if (!hashes.is_open())
+    {
+        LogError("failed to dump file_hashes.txt");
+        return;
+    }
+
+    hashes << "#file name|file hash|\n\n";
+    for (int i = 0; i < m_items.size(); i++)
+    {
+        ItemInfo* pItem = m_items[i];
+        if (pItem == NULL)
+        {
+            continue;
+        }
+
+        if (!pItem->texture.empty() && pItem->textureHash != 0)
+        {
+            bool bFileFound = std::find(dumped_hashes.begin(), dumped_hashes.end(), pItem->texture) != dumped_hashes.end();
+            if (!bFileFound)
+            {
+                hashes << pItem->texture + "|" + std::to_string(pItem->textureHash) + "|\n";
+                dumped_hashes.push_back(pItem->texture);
+            }
+        }
+
+        if (!pItem->textureExtra.empty() && pItem->textureExtraHash != 0)
+        {
+            bool bFileFound = std::find(dumped_hashes.begin(), dumped_hashes.end(), pItem->textureExtra) != dumped_hashes.end();
+            if (!bFileFound)
+            {
+                hashes << pItem->textureExtra + "|" + std::to_string(pItem->textureExtraHash) + "|\n";
+                dumped_hashes.push_back(pItem->textureExtra);
+            }
+        }
+    }
+
+    hashes.close();
+    LogMsg("dumped file_hashes.txt to dumps/");
 }

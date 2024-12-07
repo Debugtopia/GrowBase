@@ -58,13 +58,9 @@ public:
 	~GrowConfig() = default;
 
 	/*loads config.txt*/
-	bool Load();
+	bool Load(Config& conf);
 	/*reloads live-updateable lines in config.txt*/
-	bool Reload();
-
-private:
-	Config m_config;
-
+	bool Reload(Config& conf);
 };
 
 GrowConfig* GetGrowConfig();

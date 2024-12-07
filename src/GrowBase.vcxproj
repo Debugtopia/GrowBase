@@ -105,24 +105,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../src;../lib/enet/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;../lib/enet/libs/Debug/enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;../lib/enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../src;../lib/enet/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -133,6 +135,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../lib;../lib/enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;../lib/enet/libs/Release/enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -141,9 +145,11 @@
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="BaseApp.cpp" />
+    <ClCompile Include="ENetServer\ENetServer.cpp" />
     <ClCompile Include="GrowConfig.cpp" />
     <ClCompile Include="Items\ItemInfo.cpp" />
     <ClCompile Include="Items\ItemInfoManager.cpp" />
+    <ClCompile Include="Client\GameClient.cpp" />
     <ClCompile Include="SDK\Proton\FileSystem\FileManager.cpp" />
     <ClCompile Include="SDK\Proton\FileSystem\StreamingInstance.cpp" />
     <ClCompile Include="SDK\Proton\FileSystem\StreamingInstanceFile.cpp" />
@@ -153,11 +159,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
+    <ClInclude Include="ENetServer\ENetServer.h" />
     <ClInclude Include="GrowConfig.h" />
     <ClInclude Include="Items\Defs.h" />
     <ClInclude Include="Items\ItemInfo.h" />
     <ClInclude Include="Items\ItemInfoManager.h" />
     <ClInclude Include="Packet\GameUpdatePacket.h" />
+    <ClInclude Include="Client\GameClient.h" />
     <ClInclude Include="SDK\Proton\FileSystem\FileManager.h" />
     <ClInclude Include="SDK\Proton\FileSystem\FileSystem.h" />
     <ClInclude Include="SDK\Proton\FileSystem\StreamingInstance.h" />

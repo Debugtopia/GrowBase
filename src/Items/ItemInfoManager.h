@@ -1,7 +1,7 @@
 #ifndef ITEMINFOMANAGER_H
 #define ITEMINFOMANAGER_H
-#include <list>
 #include <vector>
+#include <algorithm>
 
 #include <Items/ItemInfo.h>
 #include <Packet/GameUpdatePacket.h>
@@ -23,7 +23,7 @@ public:
 
 	uint32_t GetHash() const { return m_hash; }
 	GameUpdatePacket* GetUpdatePacket() const { return m_pUpdatePacket; }
-	std::list<ItemInfo*> GetItems() const { return m_items; }
+	std::vector<ItemInfo*> GetItems() const { return m_items; }
 
 
 	ItemInfo* GetItemByID(const uint16_t& ID);
@@ -68,7 +68,7 @@ private:
 
 	GameUpdatePacket* m_pUpdatePacket = NULL;
 
-	std::list<ItemInfo*> m_items;
+	std::vector<ItemInfo*> m_items;
 	std::vector<GrowSplice> m_splices;
 
 };

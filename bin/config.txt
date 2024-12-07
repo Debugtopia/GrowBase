@@ -1,6 +1,7 @@
 #Config file for GT server.  The # at the start denotes a comment, removing it makes it a command.
  
 #base addresses we listen on
+address|0.0.0.0
 logon_port|16999
 base_port|17000
 admin_port|4587
@@ -131,7 +132,7 @@ friend_update_interval_ms|10000
 friend_update_users_per_interval|6000
  
 #Friends can "warp to friend".  1 for yes, 0 for disabled
-warp_to_friend_enabled|1
+warp_to_friend_enabled|1SS
  
 #friend list settings. Requires restart to take effect.
 max_friends|200

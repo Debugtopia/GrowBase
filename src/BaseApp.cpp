@@ -2,12 +2,15 @@
 #include <variant>
 #include <stdarg.h>
 
+#include <ENetServer/ENetServer.h>
+
+#include <Client/GameClient.h>
 
 #include <SDK/TimeWrapper.h>
 
 
 BaseApp g_baseApp;
-BaseApp __ptr GetBaseApp() { return &g_baseApp; }
+BaseApp * GetBaseApp() { return &g_baseApp; }
 
 
 BaseApp::BaseApp()
@@ -23,6 +26,34 @@ BaseApp::~BaseApp()
 	}
 }
 
+// memory funcs
+void nova_memcopy(void* pSourceTo, const void* pSource, size_t sourceSize, int& offset)
+{
+	if (pSourceTo == NULL)
+	{
+		// won't copy for safety
+		return;
+	}
+
+	memcpy(pSourceTo, pSource, sourceSize);
+	offset += (int)sourceSize;
+}
+
+void nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, int& offset)
+{
+	if (pSourceTo == NULL)
+	{
+		// won't copy for safety
+		return;
+	}
+
+	u16 strLen = (u16)str.length();
+	memcpy(pSourceTo, &strLen, 2);
+	offset += 2;
+	memcpy(static_cast<char*>(pSourceTo) + 2, str.c_str(), strLen);
+	offset += (int)strLen;
+}
+
 
 // console log funcs
 void LogMsg(const char* traceStr, ...)
@@ -30,7 +61,7 @@ void LogMsg(const char* traceStr, ...)
 	va_list argsVA;
 	const int logSize = 4096;
 	char buffer[logSize];
-	memset(buffer, 0, logSize);
+	std::memset(buffer, 0, logSize);
 	va_start(argsVA, traceStr);
 
 #ifdef WIN32
@@ -57,7 +88,7 @@ void LogError(const char* traceStr, ...)
 	va_list argsVA;
 	const int logSize = 4096;
 	char buffer[logSize];
-	memset(buffer, 0, logSize);
+	std::memset(buffer, 0, logSize);
 	va_start(argsVA, traceStr);
 
 #ifdef WIN32
@@ -89,6 +120,9 @@ void BaseApp::Init()
 {
 	// setting up our server
 	LogMsg("starting GrowBase");
-	GetGrowConfig()->Load();
+	GetGrowConfig()->Load(m_config);
+	//GetItemInfoManager()->LoadFile();
 	GetItemInfoManager()->Load();
+	GetItemInfoManager()->Serialize(5);
+	GetENetServer()->Run("0.0.0.0", GetConfig().basePort);
 }

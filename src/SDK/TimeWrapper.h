@@ -6,26 +6,25 @@
 #include <sstream>
 #include <iomanip>
 
-static std::string GetTimeAsString()
+static nova_str GetTimeAsString()
 {
     std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::tm localTime = *std::localtime(&time);
-    std::stringstream ss;
+    std::tm local_time = *std::localtime(&time);
+    nova_sstream ss;
 
-    ss << std::put_time(&localTime, "%d/%m %H:%M:%S");
+    ss << std::put_time(&local_time, "%d/%m %H:%M:%S");
     return ss.str();
 }
 
-static std::string GetSendDateString(std::chrono::steady_clock::time_point timer)
+static nova_str GetSendDateString(std::chrono::steady_clock::time_point timer)
 {
-    auto now = std::chrono::steady_clock::now();
-    auto system_time = std::chrono::system_clock::now() + std::chrono::duration_cast<std::chrono::system_clock::duration>(timer - now);
-    std::time_t time_t_system_time = std::chrono::system_clock::to_time_t(system_time);
-    std::tm local_tm = *std::localtime(&time_t_system_time);
-    std::ostringstream oss;
+    auto system_time = std::chrono::system_clock::now() + std::chrono::duration_cast<std::chrono::system_clock::duration>(timer - std::chrono::steady_clock::now());
+    std::time_t system_time_t = std::chrono::system_clock::to_time_t(system_time);
+    std::tm local_time = *std::localtime(&system_time_t);
+    nova_ostream stream;
 
-    oss << "(" << std::put_time(&local_tm, "%H:%M on %m/%d") << ")";
-    return oss.str();
+    stream << "(" << std::put_time(&local_time, "%H:%M on %m/%d") << ")";
+    return stream.str();
 }
 
 #endif TIMEWRAPPER_H

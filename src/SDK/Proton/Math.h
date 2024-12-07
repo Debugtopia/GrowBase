@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <cmath>
+#include <algorithm>
 
 template<class T>
 class CL_Vec2 

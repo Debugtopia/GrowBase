@@ -137,7 +137,7 @@ template <typename T> void MemorySerializeRaw(T& var, uint8_t* pMem, int& offset
         memcpy(&var, &pMem[offsetInOut], sizeBytes);
     }
 
-    offsetInOut += sizeBytes;
+    offsetInOut += (int)sizeBytes;
 }
 
 bool MemorySerializeStringLarge(std::string& num, uint8_t* pMem, int &offsetInOut, bool bWriteToMem, uint32_t maxBytesInPacket = 0);

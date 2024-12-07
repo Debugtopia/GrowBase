@@ -1,9 +1,11 @@
 #ifndef BASEAPP_H
 #define BASEAPP_H
 #include <string>
+#include <cstring>
 #include <cstdint>
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 
 #include <GrowConfig.h>
@@ -13,24 +15,28 @@
 
 
 // global definitions
-#define STR std::string
-#define CCH const char*
-#define SStream std::ostringstream
+using nova_str = std::string;
+using nova_chr = const char*;
+using nova_sstream = std::ostringstream;
+using nova_ostream = std::ostringstream;
 
-#define U8 uint8_t
-#define U16 uint16_t
-#define U32 uint32_t
-#define U64 uint64_t
-#define UL unsigned long
-#define ULL unsigned long long
+using u8 = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
+using ul = unsigned long;
+using ull = unsigned long long;
 
-#define I8 int8_t
-#define I16 int16_t
-#define I32 int32_t
-#define I64 int64_t
+using i8 = int8_t;
+using i16 = int16_t;
+using i32 = int32_t;
+using i64 = int64_t;
 
-#define byte char
-#define __ptr *
+#define ptr(x) x*
+
+// memory funcs
+void nova_memcopy(void* pSourceTo, const void* pSource, size_t sourceSize, int& offset);
+void nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, int& offset);
 
 
 /*
@@ -55,7 +61,6 @@ Additional Credits:
 enum class eLogonMode
 {
 	// thanks muodo for explaining the logon modes ~ Hexago
-
 	LOGONMODE_NONE = 0, // normal login mode, will show the "Logging on..." messages
 	LOGONMODE_SILENT = 1, // switch servers but doesn't shows the "Logging on..." messages
 	LOGONMODE_JOINREQUEST, // sends action|join_request with doorID when called
@@ -76,22 +81,23 @@ public:
 	BaseApp();
 	~BaseApp();
 
-	U8            GetServerID() const { return m_serverID; }
+	u8            GetServerID() const { return m_serverID; }
 	Config        GetConfig() const { return m_config; }
 
 	/*initializes BaseApp, loads essentials and configures the ENet server.*/
 	void          Init();
 
 private:
-	// file-dependant configs, mostly used for in-game commands like /news, /rules
-	std::string       m_gazette = "";
-	std::string       m_gazette_Android = ""; // this is shown to Android users only
-	std::string       m_rules = "";
+	Config            m_config;
 
-	U8                m_serverID = 0; // game server ID
-	Config m_config;
+	// file-dependant configs, mostly used for in-game commands like /news, /rules
+	nova_str          m_gazette = "";
+	nova_str          m_gazette_Android = ""; // this is shown to Android users only
+	nova_str          m_rules = "";
+
+	u8                m_serverID = 0; // game server ID
 };
 
-BaseApp __ptr GetBaseApp();
+BaseApp* GetBaseApp();
 
 #endif BASEAPP_H

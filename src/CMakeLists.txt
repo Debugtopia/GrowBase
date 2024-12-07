@@ -12,21 +12,36 @@ set(PCH_HEADER "BaseApp.h")
 # source files
 file(GLOB_RECURSE SOURCES "*.cpp" "*.h" "*.hpp" "*.header" "*.src")
 add_executable(GrowBase ${SOURCES})
-
-# library files
-file(GLOB LIBRARIES "${CMAKE_SOURCE_DIR}/../lib/*.a")
-include_directories(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/../lib)
+message("ENet include directory: ${CMAKE_SOURCE_DIR}/lib/enet/include")
 
 # target directories
-target_include_directories(GrowBase PRIVATE .)
+target_include_directories(GrowBase PRIVATE 
+    .
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/lib/enet/include
+)
 
-# target libraries
-target_link_libraries(GrowBase PRIVATE ${LIBRARIES})
+# library files
+if (WIN32)
+    target_link_libraries(GrowBase PRIVATE 
+        ws2_32.lib
+        winmm.lib
+    )
+elseif (UNIX)
+    target_link_libraries(GrowBase PRIVATE 
+        pthread
+    )
+endif()
+
+target_link_libraries(GrowBase PRIVATE 
+    optimized ${CMAKE_SOURCE_DIR}/lib/enet/libs/Release/enet.lib
+    debug ${CMAKE_SOURCE_DIR}/lib/enet/libs/Debug/enet.lib
+)
 
 # target precompiled headers
 target_precompile_headers(GrowBase PRIVATE ${PCH_HEADER})
 
 # target definitions
 target_compile_definitions(GrowBase PRIVATE 
-_CRT_SECURE_NO_WARNINGS
+    _CRT_SECURE_NO_WARNINGS
 )
