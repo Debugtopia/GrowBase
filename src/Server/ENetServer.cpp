@@ -1,6 +1,6 @@
 #include <BaseApp.h> // precompiled
 
-#include <ENetServer/ENetServer.h>
+#include <Server/ENetServer.h>
 #include <Client/GameClient.h>
 
 ENetServer g_server;

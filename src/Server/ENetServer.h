@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <enet/enet.h>
+#include <Server/PacketHandler.h>
 
 
 class ENetServer

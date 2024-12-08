@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="BaseApp.cpp" />
-    <ClCompile Include="ENetServer\ENetServer.cpp" />
+    <ClCompile Include="Server\ENetServer.cpp" />
     <ClCompile Include="GrowConfig.cpp" />
     <ClCompile Include="Items\ItemInfo.cpp" />
     <ClCompile Include="Items\ItemInfoManager.cpp" />
@@ -156,10 +156,16 @@
     <ClCompile Include="SDK\Proton\MiscUtils.cpp" />
     <ClCompile Include="SDK\Proton\TextScanner.cpp" />
     <ClCompile Include="SDK\Proton\Variant.cpp" />
+    <ClCompile Include="Server\PacketHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
-    <ClInclude Include="ENetServer\ENetServer.h" />
+    <ClInclude Include="Client\LoginDetails.h" />
+    <ClInclude Include="Packet\Client\LogonPacketListener.h" />
+    <ClInclude Include="SDK\HSL.h" />
+    <ClInclude Include="SDK\MD5.h" />
+    <ClInclude Include="Server\ENetServer.h" />
+    <ClInclude Include="Server\PacketHandler.h" />
     <ClInclude Include="GrowConfig.h" />
     <ClInclude Include="Items\Defs.h" />
     <ClInclude Include="Items\ItemInfo.h" />

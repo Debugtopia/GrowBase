@@ -15,8 +15,9 @@
     <ClCompile Include="GrowConfig.cpp" />
     <ClCompile Include="Items\ItemInfo.cpp" />
     <ClCompile Include="Items\ItemInfoManager.cpp" />
-    <ClCompile Include="ENetServer\ENetServer.cpp" />
+    <ClCompile Include="Server\ENetServer.cpp" />
     <ClCompile Include="Client\GameClient.cpp" />
+    <ClCompile Include="Server\PacketHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -34,7 +35,12 @@
     <ClInclude Include="Items\ItemInfo.h" />
     <ClInclude Include="Items\ItemInfoManager.h" />
     <ClInclude Include="Packet\GameUpdatePacket.h" />
-    <ClInclude Include="ENetServer\ENetServer.h" />
+    <ClInclude Include="Server\ENetServer.h" />
     <ClInclude Include="Client\GameClient.h" />
+    <ClInclude Include="Server\PacketHandler.h" />
+    <ClInclude Include="Packet\Client\LogonPacketListener.h" />
+    <ClInclude Include="Client\LoginDetails.h" />
+    <ClInclude Include="SDK\HSL.h" />
+    <ClInclude Include="SDK\MD5.h" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 #include <variant>
 #include <stdarg.h>
 
-#include <ENetServer/ENetServer.h>
+#include <Server/ENetServer.h>
 
 #include <Client/GameClient.h>
 

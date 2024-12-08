@@ -103,7 +103,7 @@ enum eGamePacketFlags
 };
 
 #pragma pack(push, 1)
-struct GameUpdatePacket
+typedef struct gameupdatepacket_t
 {
 	//offset 0
 	uint8_t type = 0;
@@ -277,9 +277,9 @@ struct GameUpdatePacket
 	
 	//offset 56
 	uint8_t data[];
-};
+} GameUpdatePacket;
 
-struct PlayerMoving
+typedef struct playermoving_t
 {
 	int netID;
 	int32_t flags = 0;
@@ -289,7 +289,7 @@ struct PlayerMoving
 
 	float destX;
 	float destY;
-};
+} PlayerMoving;
 
 #pragma pack(pop)
 

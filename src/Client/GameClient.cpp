@@ -13,7 +13,7 @@ GameClient::GameClient(ENetPeer * pConnectionPeer)
 
 GameClient::~GameClient()
 {
-	enet_peer_disconnect_later(m_pConnectionPeer, 0U);
+	//
 }
 
 void GameClient::OnConnect()
