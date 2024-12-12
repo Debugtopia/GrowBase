@@ -18,6 +18,7 @@
     <ClCompile Include="Server\ENetServer.cpp" />
     <ClCompile Include="Client\GameClient.cpp" />
     <ClCompile Include="Server\PacketHandler.cpp" />
+    <ClCompile Include="Net\NetSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -42,5 +43,7 @@
     <ClInclude Include="Client\LoginDetails.h" />
     <ClInclude Include="SDK\HSL.h" />
     <ClInclude Include="SDK\MD5.h" />
+    <ClInclude Include="Net\GrowPacket.h" />
+    <ClInclude Include="Net\NetSocket.h" />
   </ItemGroup>
 </Project>

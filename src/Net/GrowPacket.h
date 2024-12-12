@@ -5,7 +5,9 @@
 
 enum eGrowPacketType
 {
+	NET_GROW_PACKET_CONSOLE_OUTPUT, // sends console log to the concurrent client
 	NET_GROW_PACKET_AUTHORIZE, // sends packet to logon server with authorization password & needed info to setup a sub-server on it(if authorized)
+	NET_GROW_PACKET_INIT_HOST, // server replies back to the authorization packet by providing with info to init the host of the game server
 	NET_GROW_PACKET_CLIENT_REDIRECT, // fowards client towards new server
 	NET_GROW_PACKET_UPDATE_STATUS, // resync with other servers & update online count, etc
 	NET_GROW_PACKET_DISCONNECT, // disconnect from the logon server
@@ -24,7 +26,7 @@ enum eGrowPacketFlags
 {
 	NET_GROW_PACKET_FLAG_NONE = 0x0,
 	NET_GROW_PACKET_FLAG_UPDATE = 0x1, // whether server should send resync packet
-	NET_GROW_PACKET_FLAG_EXTENDED = 0x2, // extended packet data
+	NET_GROW_PACKET_FLAG_EXTENDED_DATA = 0x2, // extended packet data
 	NET_GROW_PACKET_FLAG_MAJOR_ERROR = 0x4, // whether logon should be aware of major issue going on to kill the server temporarily or not
 };
 
@@ -91,6 +93,7 @@ typedef struct growpacket_t
 		int32_t elapsedMS;
 		int32_t delayMS;
 		int32_t itemsCount;
+		int32_t tcpCommunicationPort;
 	};
 
 	//offset 24
@@ -98,6 +101,7 @@ typedef struct growpacket_t
 	{
 		uint32_t intData2 = 0;
 		uint32_t itemsHash;
+		uint32_t enetPort;
 	};
 
 	//offset 44

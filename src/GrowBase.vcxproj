@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="BaseApp.cpp" />
+    <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="Server\ENetServer.cpp" />
     <ClCompile Include="GrowConfig.cpp" />
     <ClCompile Include="Items\ItemInfo.cpp" />
@@ -161,6 +162,8 @@
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Client\LoginDetails.h" />
+    <ClInclude Include="Net\GrowPacket.h" />
+    <ClInclude Include="Net\NetSocket.h" />
     <ClInclude Include="Packet\Client\LogonPacketListener.h" />
     <ClInclude Include="SDK\HSL.h" />
     <ClInclude Include="SDK\MD5.h" />

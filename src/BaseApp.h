@@ -19,6 +19,7 @@ using nova_str = std::string;
 using nova_chr = const char*;
 using nova_sstream = std::ostringstream;
 using nova_ostream = std::ostringstream;
+using nova_stringarr = std::vector<nova_str>;
 
 using u8 = uint8_t;
 using u16 = uint16_t;
@@ -37,7 +38,7 @@ using i64 = int64_t;
 // memory funcs
 void nova_memcopy(void* pSourceTo, const void* pSource, size_t sourceSize, int& offset);
 void nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, int& offset);
-
+void nova_dealloc(void* pSource);
 
 /*
 This file is precompiled, and required to compile the application.

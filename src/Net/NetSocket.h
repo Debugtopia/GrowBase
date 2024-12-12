@@ -19,32 +19,42 @@
 
 #include <Net/GrowPacket.h>
 
+
+// this key is used to auth sub-servers, if anyone gets access to this key, they can "fake" a server to get data from your server!
+// DO NOT SHARE THE AUTH KEY!
+#define SERVER_AUTH_KEY "YOUR_SERVER_AUTH_KEY"
+
+// global socket definitions
 using ClientSocket = int;
 using ServerSocket = int;
-using NetClients = std::vector<ClientData>;
+
+#define CLIENT_INVALID_SOCKET -1
+#define CLIENT_STATE_DEAD_CONNECTION 0
+
 static void client_socket_close(ClientSocket s)
 {
 #ifdef _WIN32
     closesocket(s);
     WSACleanup();
 #else
-    close(ice);
+    close(s);
 #endif
 }
 
-struct ClientData
+typedef struct client_data_t
 {
-    ClientSocket socket; // this is the socket
+    ClientSocket socket = CLIENT_INVALID_SOCKET; // this is the socket
 
     std::string address = "127.0.0.1"; // this is the address / host used for tcp communication
-    short tcpCommunicationPort = 18000; // this is the port that is used for tcp communication
+    uint16_t tcpCommunicationPort = 18000; // this is the port that is used for tcp communication
 
     // game server variables
     int ID = 0; // game server ID - S0, S1, S2, ...
     int enetPort = 17000; // enet server port - 17000, 17001, 17002, 17003, ...
 
-    bool bDisabled = false; // whether the server has been locked out, unable to be switched into due to critical errors
-};
+    bool bQueued = false; // whether the server has been locked out, unable to be switched into due to critical errors
+} ClientData;
+using NetClients = std::vector<ClientData>;
 
 class NetSocket
 {
@@ -53,19 +63,27 @@ public:
     ~NetSocket();
 
     // get
-    ServerSocket                    *GetServerSocket() const { return m_pServerSocket; }
+    ServerSocket                    GetServerSocket() const { return m_serverSocket; }
     bool                            IsRunningAsServer() const { return m_bRunningAsAServer; }
     NetClients                      GetConnections() const { return m_connections; }
+    int                             GetServerOffsetID() const { return m_serverOffset; }
     // set
 
 
     // fn
+    bool InitServer(const char* pHost, uint16_t tcpPort);
+    void Sync();
+
+protected:
+    void AcceptConnections();
+    void ProccessIncoming();
 
 private:
-    ServerSocket                    *m_pServerSocket = NULL; // the socket the sub-servers connect to
+    ServerSocket                    m_serverSocket = CLIENT_INVALID_SOCKET; // the socket the sub-servers connect to
     bool                            m_bRunningAsAServer = false; // whether the netsocket is used as a server or client
 
     NetClients                      m_connections = {};
+    int                             m_serverOffset = 0;
 };
 
 #endif NETSOCKET_H

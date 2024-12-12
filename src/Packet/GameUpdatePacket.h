@@ -1,6 +1,5 @@
 #ifndef GAMEUPDATEPACKET_H
 #define GAMEUPDATEPACKET_H
-
 #include <cstdint>
 #pragma warning(disable : 4200)
 

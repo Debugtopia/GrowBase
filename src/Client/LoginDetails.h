@@ -50,10 +50,10 @@ public:
 	std::string mac = "02:00:00:00:00:00"; // 17
 
 	// logon mode is used when sending OnSendToServer to switch the player between 2 sub-servers
-	int m_logonMode = 0;
+	int logonMode = 0;
 
 	// doorID is the world the player is supposte to enter upon switch of servers
-	std::string m_doorID = "EXIT";
+	std::string doorID = "EXIT";
 };
 
 #endif LOGINDETAILS_H

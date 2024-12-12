@@ -54,6 +54,17 @@ void nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, in
 	offset += (int)strLen;
 }
 
+void nova_dealloc(void* pSource)
+{
+	if (pSource == NULL)
+	{
+		// there is nothing to de-allocate
+		return;
+	}
+
+	free(pSource);
+}
+
 
 // console log funcs
 void LogMsg(const char* traceStr, ...)
