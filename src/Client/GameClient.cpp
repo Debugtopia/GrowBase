@@ -16,6 +16,16 @@ GameClient::~GameClient()
 	//
 }
 
+nova_str GameClient::GetName()
+{
+	if (m_accountID == -1)
+	{
+		return m_loginDetails.tankIDName;
+	}
+
+	return m_loginDetails.requestedName + "_" + std::to_string(m_accountID);
+}
+
 void GameClient::OnConnect()
 {
 	if (m_pConnectionPeer == NULL)

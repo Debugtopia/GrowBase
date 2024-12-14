@@ -74,6 +74,7 @@ private:
 class VariantList
 {
 public:
+	VariantList() = default;
     VariantList(Variant v0) { m_variant[0] = v0; }
     VariantList(Variant v0, Variant v1) { m_variant[0] = v0; m_variant[1] = v1; }
     VariantList(Variant v0, Variant v1, Variant v2) { m_variant[0] = v0; m_variant[1] = v1; m_variant[2] = v2; }
@@ -82,18 +83,8 @@ public:
     VariantList(Variant v0, Variant v1, Variant v2, Variant v3, Variant v4, Variant v5) { m_variant[0] = v0; m_variant[1] = v1; m_variant[2] = v2; m_variant[3] = v3; m_variant[4] = v4;  m_variant[5] = v5; }
 	VariantList(Variant v0, Variant v1, Variant v2, Variant v3, Variant v4, Variant v5, Variant v6) { m_variant[0] = v0; m_variant[1] = v1; m_variant[2] = v2; m_variant[3] = v3; m_variant[4] = v4;  m_variant[5] = v5;  m_variant[6] = v6; }
 
-    uint8_t* SerializeToMem(int32_t* pSizeOut);
-
-	Variant Get(int parmNum)
-	{
-		if (parmNum < 0 || parmNum >= C_MAX_VARIANT_LIST_PARMS)
-		{
-			return {};
-		}
-
-		return m_variant[parmNum];
-	}
-
+	// get
+	Variant& Get(int parmNum) { return m_variant[parmNum]; }
     Variant* operator[](int parmNum) 
 	{
 		if (parmNum < 0 || parmNum >= C_MAX_VARIANT_LIST_PARMS)
@@ -103,6 +94,9 @@ public:
 
         return &m_variant[parmNum];
     }
+
+	// fn
+	uint8_t* SerializeToMem(int32_t* pSizeOut);
 
 private:
     Variant m_variant[C_MAX_VARIANT_LIST_PARMS];

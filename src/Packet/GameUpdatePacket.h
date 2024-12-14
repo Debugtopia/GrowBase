@@ -3,6 +3,8 @@
 #include <cstdint>
 #pragma warning(disable : 4200)
 
+#define GUP_SIZE 56
+
 enum eGamePacketType
 {
 	NET_GAME_PACKET_STATE,
@@ -171,9 +173,9 @@ typedef struct gameupdatepacket_t
 	//offset 16
 	union
 	{
-		float fVar = 0;
-		float waterSpeed;
-		float objectAltCount;
+		float   fVar = 0;
+		float   waterSpeed;
+		float   objectAltCount;
 	};
 
 	//offset 20
@@ -197,54 +199,54 @@ typedef struct gameupdatepacket_t
 	//offset 24
 	union
 	{
-		float vecX = 0;
-		float posX;
-		float accel;
-		float punchRangeIn;
+		float   vecX = 0;
+		float   posX;
+		float   accel;
+		float   punchRangeIn;
 	};
 
 	//offset 28
 	union
 	{
-		float vecY = 0;
-		float posY;
-		float buildRangeIn;
-		float punchStrength;
+		float   vecY = 0;
+		float   posY;
+		float   buildRangeIn;
+		float   punchStrength;
 	};
 
 	//offset 32
 	union
 	{
-		float vec2X = 0;
-		float destX;
-		float gravityIn;
-		float speedOut;
-		float velocityX;
-		float particleSize;
-		float pos2X;
-		int hackType;
+		float   vec2X = 0;
+		float   destX;
+		float   gravityIn;
+		float   speedOut;
+		float   velocityX;
+		float   particleSize;
+		float   pos2X;
+		int     hackType;
 	};
 
 	//offset 36
 	union
 	{
-		float vec2Y = 0;
-		float destY;
-		float speedIn;
-		float gravityOut;
-		float velocityY;
-		float particleAltID;
-		float pos2Y;
-		int hackType2;
+		float   vec2Y = 0;
+		float   destY;
+		float   speedIn;
+		float   gravityOut;
+		float   velocityY;
+		float   particleAltID;
+		float   pos2Y;
+		int     hackType2;
 	};
 
 	//offset 40
 	union
 	{
-		float particleRotation = 0;
-		float npcSpeed;
-		float npcVariable;
-		float notRemovingItem;
+		float   particleRotation = 0;
+		float   npcSpeed;
+		float   npcVariable;
+		float   notRemovingItem;
 	};
 
 	//offset 44
@@ -272,22 +274,22 @@ typedef struct gameupdatepacket_t
 	};
 
 	//offset 52
-	uint32_t dataLength = 0;
+	uint32_t     dataLength = 0;
 	
 	//offset 56
-	uint8_t data[];
+	uint8_t      data[];
 } GameUpdatePacket;
 
 typedef struct playermoving_t
 {
-	int netID;
+	int     netID;
 	int32_t flags = 0;
 
-	float startX;
-	float startY;
+	float   startX;
+	float   startY;
 
-	float destX;
-	float destY;
+	float   destX;
+	float   destY;
 } PlayerMoving;
 
 #pragma pack(pop)

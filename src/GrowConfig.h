@@ -58,11 +58,11 @@ public:
 	~GrowConfig() = default;
 
 	/*loads config.txt*/
-	bool Load(Config& conf);
+	bool       Load(Config& conf);
 	/*reloads live-updateable lines in config.txt*/
-	bool Reload(Config& conf);
+	bool       Reload(Config& conf);
 };
 
-GrowConfig* GetGrowConfig();
+GrowConfig*    GetGrowConfig();
 
 #endif GROWCONFIG_H

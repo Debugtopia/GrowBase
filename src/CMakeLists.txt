@@ -10,9 +10,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_CURRENT_SOURCE_DIR}/../bin
 set(PCH_HEADER "BaseApp.h")
 
 # source files
-file(GLOB_RECURSE SOURCES "*.cpp" "*.h" "*.hpp" "*.header" "*.src")
+file(GLOB_RECURSE SOURCES "*.cpp" "*.h" "*.hpp" "*.hh" "*.cc")
 add_executable(GrowBase ${SOURCES})
-message("ENet include directory: ${CMAKE_SOURCE_DIR}/lib/enet/include")
 
 # target directories
 target_include_directories(GrowBase PRIVATE 

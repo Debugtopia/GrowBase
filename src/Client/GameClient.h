@@ -22,11 +22,14 @@ public:
 	int                 GetUserID() const { return m_userID; }
 	int                 GetOnlineID() const { return m_onlineID; }
 	int                 GetNetID() const { return m_netID; }
+	int                 GetAccountID() const { return m_accountID; }
 
+	nova_str            GetName();
 
 	// set
 	void                SetOnlineID(const int& ID) { m_onlineID = ID; }
 	void                SetNetID(const int& ID) { m_netID = ID; }
+	void                SetAccountID(const int& ID) { m_accountID = ID; }
 
 
 	// packets
@@ -45,6 +48,7 @@ private:
 	int                 m_userID = 0;
 	int                 m_onlineID = 0;
 	int                 m_netID = 0;
+	int                 m_accountID = 100;
 };
 
 #endif GAMECLIENT_H

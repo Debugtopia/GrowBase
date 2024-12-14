@@ -12,6 +12,7 @@
 
 // managers
 #include <Items/ItemInfoManager.h>
+#include <World/WorldsManager.h>
 
 
 // global definitions
@@ -19,6 +20,8 @@ using nova_str = std::string;
 using nova_chr = const char*;
 using nova_sstream = std::ostringstream;
 using nova_ostream = std::ostringstream;
+using nova_fstream = std::fstream;
+using nova_io = std::ios;
 using nova_stringarr = std::vector<nova_str>;
 
 using u8 = uint8_t;
@@ -82,11 +85,11 @@ public:
 	BaseApp();
 	~BaseApp();
 
-	u8            GetServerID() const { return m_serverID; }
-	Config        GetConfig() const { return m_config; }
+	u8                GetServerID() const { return m_serverID; }
+	Config            GetConfig() const { return m_config; }
 
 	/*initializes BaseApp, loads essentials and configures the ENet server.*/
-	void          Init();
+	void              Init();
 
 private:
 	Config            m_config;
@@ -99,6 +102,6 @@ private:
 	u8                m_serverID = 0; // game server ID
 };
 
-BaseApp* GetBaseApp();
+BaseApp*              GetBaseApp();
 
 #endif BASEAPP_H

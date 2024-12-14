@@ -73,7 +73,7 @@ ItemInfo* ItemInfoManager::CreateSeedVersionOfLastAddedItem(const uint16_t& tile
         return pTargetItem;
     }
 
-    std::string name = pFruitItem->name + " Seed";
+    nova_str name = pFruitItem->name + " Seed";
     if (tileID == ITEM_ID_MAGIC_EGG)
     {
         name = "Magic Egg";
@@ -121,7 +121,7 @@ ItemInfo* ItemInfoManager::CreateSeedVersionOfLastAddedItem(const uint16_t& tile
 
 int ItemInfoManager::StringToItemType(const std::string& str)
 {
-    std::map<std::string, int> eItemTypeMap = {
+    std::map<nova_str, int> eItemTypeMap = {
     {"TYPE_FIST", TYPE_FIST},
     {"TYPE_WRENCH", TYPE_WRENCH},
     {"TYPE_DOOR", TYPE_DOOR},
@@ -274,7 +274,7 @@ int ItemInfoManager::StringToItemType(const std::string& str)
 
 std::string ItemInfoManager::ItemTypeToString(const int& itemType)
 {
-    std::map<int, std::string> eItemTypeMap = {
+    std::map<int, nova_str> eItemTypeMap = {
     {TYPE_FIST, "TYPE_FIST"},
     {TYPE_WRENCH, "TYPE_WRENCH"},
     {TYPE_DOOR, "TYPE_DOOR"},
@@ -806,7 +806,7 @@ bool ItemInfoManager::Load()
     std::vector<nova_str> lines = t.GetLines();
     for (int i = 0; i < lines.size(); i++)
     {
-        const std::string& line = lines[i];
+        const nova_str& line = lines[i];
         if (line.starts_with('#') || line.empty())
         {
             continue;
@@ -854,8 +854,8 @@ bool ItemInfoManager::Load()
             pItem->seedOver = std::atoi(tokens[3].c_str());
             pItem->treeBase = std::atoi(tokens[4].c_str());
             pItem->treeOver = std::atoi(tokens[5].c_str());
-            std::vector<std::string> seedColor = Utils::StringTokenize(tokens[7], ",");
-            std::vector<std::string> treeColor = Utils::StringTokenize(tokens[9], ",");
+            std::vector<nova_str> seedColor = Utils::StringTokenize(tokens[7], ",");
+            std::vector<nova_str> treeColor = Utils::StringTokenize(tokens[9], ",");
             if (seedColor.size() < 4 || treeColor.size() < 4)
             {
                 // failed to parse seed/tree color
@@ -1421,7 +1421,7 @@ void ItemInfoManager::Serialize(const uint16_t& version)
 
 void ItemInfoManager::DumpItemDefinitions()
 {
-    std::fstream defs("dumps/item_definitions.txt", std::ios::out);
+    nova_fstream defs("dumps/item_definitions.txt", nova_io::out);
     if (!defs.is_open())
     {
         LogError("failed to dump item_definitions.txt");
@@ -1467,8 +1467,8 @@ void ItemInfoManager::DumpItemDefinitions()
 
         if (pItem->type == TYPE_SEED)
         {
-            std::string seedRGBA = std::to_string((int)GET_RED(pItem->seedColor)) + "," + std::to_string((int)GET_GREEN(pItem->seedColor)) + "," + std::to_string((int)GET_BLUE(pItem->seedColor)) + "," + std::to_string((int)GET_ALPHA(pItem->seedColor));
-            std::string treeRGBA = std::to_string((int)GET_RED(pItem->treeColor)) + "," + std::to_string((int)GET_GREEN(pItem->treeColor)) + "," + std::to_string((int)GET_BLUE(pItem->treeColor)) + "," + std::to_string((int)GET_ALPHA(pItem->treeColor));
+            nova_str seedRGBA = std::to_string((int)GET_RED(pItem->seedColor)) + "," + std::to_string((int)GET_GREEN(pItem->seedColor)) + "," + std::to_string((int)GET_BLUE(pItem->seedColor)) + "," + std::to_string((int)GET_ALPHA(pItem->seedColor));
+            nova_str treeRGBA = std::to_string((int)GET_RED(pItem->treeColor)) + "," + std::to_string((int)GET_GREEN(pItem->treeColor)) + "," + std::to_string((int)GET_BLUE(pItem->treeColor)) + "," + std::to_string((int)GET_ALPHA(pItem->treeColor));
             defs << "setup_seed|" + std::to_string((int)pItem->ID) + "|" + std::to_string((int)pItem->seedBase) + "|" + std::to_string((int)pItem->seedOver) + "|" + std::to_string((int)pItem->treeBase) + "|" + std::to_string((int)pItem->treeOver) + "|seedColor|" + seedRGBA + "|treeColor|" + treeRGBA + "|" + std::to_string((int)pItem->seed1) + "|" + std::to_string((int)pItem->seed2) + "|" + std::to_string((int)pItem->bloomTime) + "|\n";
         }
         else if (pItem->type == TYPE_CLOTHES)
@@ -1482,7 +1482,7 @@ void ItemInfoManager::DumpItemDefinitions()
 
         if (pItem->editableTypes != 0)
         {
-            std::string bits = "";
+            nova_str bits = "";
             if (pItem->editableTypes & FLIPPED) bits.append(ItemFlagToString(FLIPPED) + "|");
             if (pItem->editableTypes & EDITABLE) bits.append(ItemFlagToString(EDITABLE) + "|");
             if (pItem->editableTypes & SEEDLESS) bits.append(ItemFlagToString(SEEDLESS) + "|");
@@ -1536,7 +1536,7 @@ void ItemInfoManager::DumpItemDefinitions()
 
         if (pItem->flags != 0)
         {
-            std::string bits = "";
+            nova_str bits = "";
             if (pItem->flags & ROBOT_DEADLY) bits.append(ItemFlag2ToString(ROBOT_DEADLY) + "|");
             if (pItem->flags & ROBOT_SHOOT_LEFT) bits.append(ItemFlag2ToString(ROBOT_SHOOT_LEFT) + "|");
             if (pItem->flags & ROBOT_SHOOT_RIGHT) bits.append(ItemFlag2ToString(ROBOT_SHOOT_RIGHT) + "|");
@@ -1566,7 +1566,7 @@ void ItemInfoManager::DumpItemDefinitions()
             defs << std::format("set_flags2|{}\n", bits);
         }
 
-        std::string v9 = "";
+        nova_str v9 = "";
         for (int i = 0; i < 60; i++)
         {
             v9.append(std::format("{},", (int)pItem->clientData[i]));
@@ -1591,7 +1591,7 @@ void ItemInfoManager::DumpItemDefinitions()
 
         if (pItem->fxFlags != 0)
         {
-            std::string fxBits = "";
+            nova_str fxBits = "";
             if (pItem->fxFlags & MULTI_ANIM_START) fxBits.append(ItemFxFlagToString(MULTI_ANIM_START) + "|");
             if (pItem->fxFlags & PING_PONG_ANIM) fxBits.append(ItemFxFlagToString(PING_PONG_ANIM) + "|");
             if (pItem->fxFlags & OVERLAY_OBJECT) fxBits.append(ItemFxFlagToString(OVERLAY_OBJECT) + "|");
@@ -1617,7 +1617,7 @@ void ItemInfoManager::DumpItemDefinitions()
             defs << std::format("set_fx_flags|{}\n", fxBits);
         }
 
-        std::string parts = "";
+        nova_str parts = "";
         for (int i = 0; i < 9; i++)
         {
             parts.append(std::format("{},", (int)pItem->bodyParts[i]));
@@ -1677,7 +1677,7 @@ void ItemInfoManager::DumpItemDefinitions()
     LogMsg("dumped item_definitions.txt to dumps/");
 
     std::vector<nova_str> dumped_hashes;
-    std::fstream hashes("dumps/file_hashes.txt", std::ios::out);
+    nova_fstream hashes("dumps/file_hashes.txt", nova_io::out);
     if (!hashes.is_open())
     {
         LogError("failed to dump file_hashes.txt");

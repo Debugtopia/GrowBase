@@ -18,6 +18,6 @@ private:
     ENetHost    *m_pHost = NULL;
 };
 
-PacketHandler* GetPacketHandler();
+PacketHandler*  GetPacketHandler();
 
 #endif PACKETHANDLER_H

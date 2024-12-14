@@ -158,13 +158,16 @@
     <ClCompile Include="SDK\Proton\TextScanner.cpp" />
     <ClCompile Include="SDK\Proton\Variant.cpp" />
     <ClCompile Include="Server\PacketHandler.cpp" />
+    <ClCompile Include="World\WorldsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Client\LoginDetails.h" />
     <ClInclude Include="Net\GrowPacket.h" />
     <ClInclude Include="Net\NetSocket.h" />
+    <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />
     <ClInclude Include="Packet\Client\LogonPacketListener.h" />
+    <ClInclude Include="SDK\Builders\WorldOffersBuilder.h" />
     <ClInclude Include="SDK\HSL.h" />
     <ClInclude Include="SDK\MD5.h" />
     <ClInclude Include="Server\ENetServer.h" />
@@ -184,6 +187,8 @@
     <ClInclude Include="SDK\Proton\TextScanner.h" />
     <ClInclude Include="SDK\Proton\Variant.h" />
     <ClInclude Include="SDK\TimeWrapper.h" />
+    <ClInclude Include="World\World.h" />
+    <ClInclude Include="World\WorldsManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,6 +3,9 @@
 
 #include <SDK/Proton/MiscUtils.h>
 
+NetSocket g_net;
+NetSocket* GetNetSocket() { return &g_net; }
+
 NetSocket::NetSocket()
 {
 	//
@@ -110,7 +113,7 @@ void NetSocket::Sync()
 	pGrowResyncPacket->dataLength = (uint32_t)resyncPacketLen;
 
 	// writing connections data to the packet
-	int connectionsCount = m_connections.size();
+	int connectionsCount = (int)m_connections.size();
 	MemorySerializeRaw(connectionsCount, pGrowResyncPacket->data, offset, true);
 	for (int i = 0; i < m_connections.size(); i++)
 	{
@@ -243,6 +246,19 @@ void NetSocket::AcceptConnections()
 		else
 		{
 			// client handling packets
+		}
+	}
+}
+
+void NetSocket::ProccessIncoming()
+{
+	while (true)
+	{
+		if (m_bRunningAsAServer)
+		{
+		}
+		else
+		{
 		}
 	}
 }

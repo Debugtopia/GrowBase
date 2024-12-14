@@ -19,6 +19,7 @@
     <ClCompile Include="Client\GameClient.cpp" />
     <ClCompile Include="Server\PacketHandler.cpp" />
     <ClCompile Include="Net\NetSocket.cpp" />
+    <ClCompile Include="World\WorldsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -45,5 +46,9 @@
     <ClInclude Include="SDK\MD5.h" />
     <ClInclude Include="Net\GrowPacket.h" />
     <ClInclude Include="Net\NetSocket.h" />
+    <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />
+    <ClInclude Include="World\WorldsManager.h" />
+    <ClInclude Include="SDK\Builders\WorldOffersBuilder.h" />
+    <ClInclude Include="World\World.h" />
   </ItemGroup>
 </Project>

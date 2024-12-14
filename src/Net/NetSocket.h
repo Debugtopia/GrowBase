@@ -43,16 +43,16 @@ static void client_socket_close(ClientSocket s)
 
 typedef struct client_data_t
 {
-    ClientSocket socket = CLIENT_INVALID_SOCKET; // this is the socket
+    ClientSocket        socket = CLIENT_INVALID_SOCKET; // this is the socket
 
-    std::string address = "127.0.0.1"; // this is the address / host used for tcp communication
-    uint16_t tcpCommunicationPort = 18000; // this is the port that is used for tcp communication
+    std::string         address = "127.0.0.1"; // this is the address / host used for tcp communication
+    uint16_t            tcpCommunicationPort = 18000; // this is the port that is used for tcp communication
 
     // game server variables
-    int ID = 0; // game server ID - S0, S1, S2, ...
-    int enetPort = 17000; // enet server port - 17000, 17001, 17002, 17003, ...
+    int                 ID = 0; // game server ID - S0, S1, S2, ...
+    int                 enetPort = 17000; // enet server port - 17000, 17001, 17002, 17003, ...
 
-    bool bQueued = false; // whether the server has been locked out, unable to be switched into due to critical errors
+    bool                bQueued = false; // whether the server has been locked out, unable to be switched into due to critical errors
 } ClientData;
 using NetClients = std::vector<ClientData>;
 
@@ -85,5 +85,7 @@ private:
     NetClients                      m_connections = {};
     int                             m_serverOffset = 0;
 };
+
+NetSocket*                          GetNetSocket();
 
 #endif NETSOCKET_H

@@ -71,7 +71,7 @@ bool GrowConfig::Load(Config& conf)
 				continue;
 			}
 
-			conf.downloadServerPath = tokens[1];
+			conf.downloadServerPath = tokens[1] + "cache/";
 		}
 	}
 

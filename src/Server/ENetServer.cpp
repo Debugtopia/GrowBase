@@ -92,10 +92,9 @@ void ENetServer::RunEventListener()
                         break;
                     }
 
-					// creating our player object
+					// creating our player object & proceeding to logon
 					GameClient * pClient = new GameClient(eEvent.peer);
 					pClient->OnConnect();
-					LogMsg("connection received");
                     break;
                 }
 
@@ -106,7 +105,7 @@ void ENetServer::RunEventListener()
                         break;
                     }
 
-					LogMsg("disconnect received");
+					// deleting player
                     delete eEvent.peer->data;
                     eEvent.peer->data = NULL;
                     break;
@@ -119,9 +118,8 @@ void ENetServer::RunEventListener()
                         break;
                     }
 
-                    
-					LogMsg("packet received");
-                    //m_handler.HandleIncomingClientPacket(eEvent.peer, eEvent.packet);
+					// handling incoming packet
+                    GetPacketHandler()->HandleIncomingClientPacket(eEvent.peer, eEvent.packet);
                     enet_packet_destroy(eEvent.packet);
                     break;
                 }
