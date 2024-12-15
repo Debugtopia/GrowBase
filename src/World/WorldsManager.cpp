@@ -42,11 +42,8 @@ void WorldsManager::SendWorldOffers(GameClient* pClient, const bool& bOnlineMess
 
 	if (bOnlineMessage)
 	{
-		pClient->SendLog("Where would you like to go? (`w%d`` others online)", 1);
+		pClient->GetFunc().OnConsoleMessage("Where would you like to go? (`w1`` others online)");
 	}
 
-	VariantList var;
-	var.Get(0).Set("OnRequestWorldSelectMenu");
-	var.Get(1).Set(menu.Build());
-	pClient->SendVariantPacket(var);
+	pClient->GetFunc().OnRequestWorldSelectMenu(menu.Build());
 }

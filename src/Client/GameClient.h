@@ -7,6 +7,8 @@
 #include <SDK/Proton/Variant.h>
 
 #include <Client/LoginDetails.h>
+#include <Client/FunctionFactory.h>
+#include <Client/PlayerItems.h>
 
 class GameClient
 {
@@ -17,14 +19,25 @@ public:
 	// get
 	ENetPeer            *GetPeer() { return m_pConnectionPeer; }
 	LoginDetails        *GetLoginDetails() { return &m_loginDetails; }
-
+	FunctionFactory     GetFunc() { return m_func; }
+	PlayerItems         *GetItems() { return &m_items; }
 
 	int                 GetUserID() const { return m_userID; }
 	int                 GetOnlineID() const { return m_onlineID; }
-	int                 GetNetID() const { return m_netID; }
 	int                 GetAccountID() const { return m_accountID; }
 
 	nova_str            GetName();
+
+	// NetAvatar getters
+
+	int                 GetNetID() const { return m_netID; }
+
+	// returns the current skin color of the player
+	// includes playmods's color modifiers(merging)
+	// @note: use PlayerItems::GetSkinColor() to get the original skin color instead.
+	// @note: the merged colors are never stored, they're only added to the color returned.
+	unsigned int        GetSkinColor();
+
 
 	// set
 	void                SetOnlineID(const int& ID) { m_onlineID = ID; }
@@ -40,15 +53,21 @@ public:
 	void                SendVariantPacket(VariantList variant, const int& netID = -1, const int& delayMS = 0);
 	void                SendEntryFail(const bool& bResetCamera = false, const std::string& errMsg = "");
 
+
 private:
-	ENetPeer            *m_pConnectionPeer = NULL;
+	ENetPeer            *m_pConnectionPeer = NULL; // the connection peer
 
-	LoginDetails        m_loginDetails;
+	LoginDetails        m_loginDetails; // logon packet's details are stored there
+	FunctionFactory     m_func; // class containing variant packets
+	PlayerItems         m_items; // class containing items, netavatar stuff, skin colors, inventory, ...
 
-	int                 m_userID = 0;
-	int                 m_onlineID = 0;
-	int                 m_netID = 0;
-	int                 m_accountID = 100;
+	int                 m_userID = 0; // non-changeable account user ID
+	int                 m_onlineID = 0; // temporal online ID
+	int                 m_accountID = 100; // account ID(-1 if account isn't a guest)
+
+	// NetAvatar stuff
+	int                 m_netID = 0; // temporal net ID for worlds
+
 };
 
 #endif GAMECLIENT_H

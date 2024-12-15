@@ -3,12 +3,16 @@
 #include <Client/GameClient.h>
 
 
-GameClient::GameClient(ENetPeer * pConnectionPeer)
+GameClient::GameClient(ENetPeer * pConnectionPeer) : m_func(this)
 {
 	/* storing player as peer's data, it's deleted upon disconnect */
 	pConnectionPeer->data = this;
 	m_pConnectionPeer = pConnectionPeer;
 
+	LoginDetails* pLoginDetails = &m_loginDetails;
+	enet_address_get_host_ip(&pConnectionPeer->address, pLoginDetails->address, 16);
+
+	m_items = PlayerItems();
 }
 
 GameClient::~GameClient()
@@ -24,6 +28,11 @@ nova_str GameClient::GetName()
 	}
 
 	return m_loginDetails.requestedName + "_" + std::to_string(m_accountID);
+}
+
+unsigned int GameClient::GetSkinColor()
+{
+	return m_items.GetSkinColor();
 }
 
 void GameClient::OnConnect()

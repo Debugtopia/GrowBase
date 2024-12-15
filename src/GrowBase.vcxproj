@@ -145,6 +145,8 @@
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="BaseApp.cpp" />
+    <ClCompile Include="Client\FunctionFactory.cpp" />
+    <ClCompile Include="Client\PlayerItems.cpp" />
     <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="Server\ENetServer.cpp" />
     <ClCompile Include="GrowConfig.cpp" />
@@ -158,11 +160,14 @@
     <ClCompile Include="SDK\Proton\TextScanner.cpp" />
     <ClCompile Include="SDK\Proton\Variant.cpp" />
     <ClCompile Include="Server\PacketHandler.cpp" />
+    <ClCompile Include="World\World.cpp" />
     <ClCompile Include="World\WorldsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Client\LoginDetails.h" />
+    <ClInclude Include="Client\PlayerItems.h" />
+    <ClInclude Include="Client\FunctionFactory.h" />
     <ClInclude Include="Net\GrowPacket.h" />
     <ClInclude Include="Net\NetSocket.h" />
     <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />

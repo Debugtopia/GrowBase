@@ -8,7 +8,10 @@
 #include <memory>
 
 
+
 #include <GrowConfig.h>
+
+
 
 // managers
 #include <Items/ItemInfoManager.h>
@@ -16,43 +19,56 @@
 
 
 // global definitions
-using nova_str = std::string;
-using nova_chr = const char*;
-using nova_sstream = std::ostringstream;
-using nova_ostream = std::ostringstream;
-using nova_fstream = std::fstream;
-using nova_io = std::ios;
+using nova_str =       std::string;
+using nova_chr =       const char*;
+using nova_sstream =   std::ostringstream;
+using nova_ostream =   std::ostringstream;
+using nova_fstream =   std::fstream;
+using nova_io =        std::ios;
 using nova_stringarr = std::vector<nova_str>;
 
-using u8 = uint8_t;
-using u16 = uint16_t;
-using u32 = uint32_t;
-using u64 = uint64_t;
-using ul = unsigned long;
-using ull = unsigned long long;
+using u8 =             uint8_t;
+using u16 =            uint16_t;
+using u32 =            uint32_t;
+using u64 =            uint64_t;
+using ul =             unsigned long;
+using ull =            unsigned long long;
 
-using i8 = int8_t;
-using i16 = int16_t;
-using i32 = int32_t;
-using i64 = int64_t;
+using i8 =             int8_t;
+using i16 =            int16_t;
+using i32 =            int32_t;
+using i64 =            int64_t;
 
-#define ptr(x) x*
+#define                ptr(x) x*
+
+
 
 // memory funcs
-void nova_memcopy(void* pSourceTo, const void* pSource, size_t sourceSize, int& offset);
-void nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, int& offset);
-void nova_dealloc(void* pSource);
+void   nova_memcopy(void* pSourceTo, const void* pSource, size_t sourceSize, int& offset);
+void   nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, int& offset);
+void   nova_dealloc(void* pSource);
+
+
+
+
 
 /*
-This file is precompiled, and required to compile the application.
++ This file is precompiled, and required to compile the application.
 
 Please DO NOT remove our credits, we have worked hard to open-source this project and make GTPS community better.
-However, you can add yourself to "Additional Credits" category if you like.
+- However, you can add yourself to "Additional Credits" category if you like.
 
-Credits:
+Feel free to dm xhexago on discord for any questions regarding the source
+- Official Discord Server for this open-source project: https://discord.gg/z27evDGqhy
+
+Official Contributors Credits:
 -  Hexago(Discord, Telegram: xhexago) - main developer of this project
 -  Caferius(Discord: caferius) - providing with cache & config files from real servers
 -  MuOdO(Discord: muodo) - providing with information over growtopia systems, and many more useful information used in this project
+
+Unofficial Contributors Credits:
+-  dos(Discord: datdos) - provided with some insider info, helped with variables naming and improving the code style
+-  Rebillion(Discord: rebillionz) - provided with config files, explanation for some of the keys, helped me get in the gt coding back in 2020
 
 Additional Credits:
 -  add yourself here
@@ -60,7 +76,25 @@ Additional Credits:
 -  add yourself here
 -  add yourself here
 -  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
+-  add yourself here
 */
+
+
+
+// global variables
+static  std::ofstream           g_logFile; // the file we write the logs into
+
+
+
 
 enum class eLogonMode
 {
@@ -72,10 +106,12 @@ enum class eLogonMode
 	NUM_LOGONMODE
 };
 
+
+
 // console log funcs
-static std::ofstream g_logFile; // the file we write the logs into
-void LogMsg(const char* traceStr, ...);
-void LogError(const char* traceStr, ...);
+void   LogMsg(const char* traceStr, ...);
+void   LogError(const char* traceStr, ...);
+
 
 
 Config GetConfig();

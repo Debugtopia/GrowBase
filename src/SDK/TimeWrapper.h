@@ -12,6 +12,7 @@ static nova_str GetTimeAsString()
     std::tm local_time = *std::localtime(&time);
     nova_sstream ss;
 
+    // this format is used in the /time & /stats
     ss << std::put_time(&local_time, "%d/%m %H:%M:%S");
     return ss.str();
 }
@@ -23,6 +24,7 @@ static nova_str GetSendDateString(std::chrono::steady_clock::time_point timer)
     std::tm local_time = *std::localtime(&system_time_t);
     nova_ostream stream;
 
+    // this format is used on the bulletin boards & punish/view menu
     stream << "(" << std::put_time(&local_time, "%H:%M on %m/%d") << ")";
     return stream.str();
 }
