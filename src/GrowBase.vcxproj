@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="BaseApp.cpp" />
-    <ClCompile Include="Client\FunctionFactory.cpp" />
+    <ClCompile Include="Client\VariantFunc.cpp" />
     <ClCompile Include="Client\PlayerItems.cpp" />
     <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="Server\ENetServer.cpp" />
@@ -160,6 +160,7 @@
     <ClCompile Include="SDK\Proton\TextScanner.cpp" />
     <ClCompile Include="SDK\Proton\Variant.cpp" />
     <ClCompile Include="Server\PacketHandler.cpp" />
+    <ClCompile Include="World\Tile.cpp" />
     <ClCompile Include="World\World.cpp" />
     <ClCompile Include="World\WorldsManager.cpp" />
   </ItemGroup>
@@ -167,11 +168,12 @@
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Client\LoginDetails.h" />
     <ClInclude Include="Client\PlayerItems.h" />
-    <ClInclude Include="Client\FunctionFactory.h" />
+    <ClInclude Include="Client\VariantFunc.h" />
     <ClInclude Include="Net\GrowPacket.h" />
     <ClInclude Include="Net\NetSocket.h" />
     <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />
     <ClInclude Include="Packet\Client\LogonPacketListener.h" />
+    <ClInclude Include="SDK\Builders\DialogBuilder.h" />
     <ClInclude Include="SDK\Builders\WorldOffersBuilder.h" />
     <ClInclude Include="SDK\HSL.h" />
     <ClInclude Include="SDK\MD5.h" />
@@ -192,6 +194,7 @@
     <ClInclude Include="SDK\Proton\TextScanner.h" />
     <ClInclude Include="SDK\Proton\Variant.h" />
     <ClInclude Include="SDK\TimeWrapper.h" />
+    <ClInclude Include="World\Tile.h" />
     <ClInclude Include="World\World.h" />
     <ClInclude Include="World\WorldsManager.h" />
   </ItemGroup>

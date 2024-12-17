@@ -21,8 +21,9 @@
     <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="World\WorldsManager.cpp" />
     <ClCompile Include="World\World.cpp" />
-    <ClCompile Include="Client\FunctionFactory.cpp" />
+    <ClCompile Include="Client\VariantFunc.cpp" />
     <ClCompile Include="Client\PlayerItems.cpp" />
+    <ClCompile Include="World\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -53,7 +54,9 @@
     <ClInclude Include="World\WorldsManager.h" />
     <ClInclude Include="SDK\Builders\WorldOffersBuilder.h" />
     <ClInclude Include="World\World.h" />
-    <ClInclude Include="Client\FunctionFactory.h" />
+    <ClInclude Include="Client\VariantFunc.h" />
     <ClInclude Include="Client\PlayerItems.h" />
+    <ClInclude Include="SDK\Builders\DialogBuilder.h" />
+    <ClInclude Include="World\Tile.h" />
   </ItemGroup>
 </Project>

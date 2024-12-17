@@ -5,16 +5,16 @@
 
 struct Config
 {
-	std::string address;
-	uint16_t    logonPort;
-	uint16_t    basePort;
-	uint16_t    adminPort;
+	std::string address = "0.0.0.0";
+	uint16_t    logonPort = 16999;
+	uint16_t    basePort = 17000;
+	uint16_t    adminPort = 4587;
 
 
-	std::string sqlHost;
-	std::string sqlUser;
-	std::string sqlPass;
-	std::string sqlName;
+	std::string sqlHost = "";
+	std::string sqlUser = "";
+	std::string sqlPass = "";
+	std::string sqlName = "";
 
 
 	std::string downloadServerURL = "";

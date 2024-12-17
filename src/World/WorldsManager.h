@@ -5,6 +5,7 @@
 
 #include <World/World.h>
 #include <SDK/Builders/WorldOffersBuilder.h>
+#include <SDK/Builders/DialogBuilder.h>
 
 // fowarded definitions
 class GameClient;

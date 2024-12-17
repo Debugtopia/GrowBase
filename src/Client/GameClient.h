@@ -7,7 +7,7 @@
 #include <SDK/Proton/Variant.h>
 
 #include <Client/LoginDetails.h>
-#include <Client/FunctionFactory.h>
+#include <Client/VariantFunc.h>
 #include <Client/PlayerItems.h>
 
 class GameClient
@@ -19,7 +19,7 @@ public:
 	// get
 	ENetPeer            *GetPeer() { return m_pConnectionPeer; }
 	LoginDetails        *GetLoginDetails() { return &m_loginDetails; }
-	FunctionFactory     GetFunc() { return m_func; }
+	VariantFunc         GetFunc() { return m_func; }
 	PlayerItems         *GetItems() { return &m_items; }
 
 	int                 GetUserID() const { return m_userID; }
@@ -58,7 +58,7 @@ private:
 	ENetPeer            *m_pConnectionPeer = NULL; // the connection peer
 
 	LoginDetails        m_loginDetails; // logon packet's details are stored there
-	FunctionFactory     m_func; // class containing variant packets
+	VariantFunc         m_func; // class containing variant packets
 	PlayerItems         m_items; // class containing items, netavatar stuff, skin colors, inventory, ...
 
 	int                 m_userID = 0; // non-changeable account user ID

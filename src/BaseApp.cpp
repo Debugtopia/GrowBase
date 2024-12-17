@@ -132,8 +132,10 @@ void BaseApp::Init()
 	// setting up our server
 	LogMsg("starting GrowBase");
 	GetGrowConfig()->Load(m_config);
+
 	//GetItemInfoManager()->LoadFile();
 	GetItemInfoManager()->Load();
 	GetItemInfoManager()->Serialize(5);
+
 	GetENetServer()->Run("0.0.0.0", GetConfig().basePort);
 }

@@ -5,11 +5,11 @@
 // fowardeed definitions
 class GameClient;
 
-class FunctionFactory
+class VariantFunc
 {
 public:
-	FunctionFactory(GameClient* pClient);
-	~FunctionFactory() = default;
+	VariantFunc(GameClient * pClient);
+	~VariantFunc() = default;
 
 	// variants play major part in client's understanding
 	// they have specific name, structure, if it's wrong, the client won't understand it
@@ -18,9 +18,10 @@ public:
 	void OnConsoleMessage(const nova_str& msg, const int& netID = -1, const int& delayMS = 0);
 	void OnRequestWorldSelectMenu(const nova_str& menuString, const int& netID = -1, const int& delayMS = 0);
 	void OnTalkBubble(const int& playerNetID, const nova_str& text, const u8& bubbleType = 0, const bool& bOverrideOld = false, const int& netID = -1, const int& delayMS = 0);
+	void OnDialogRequest(const nova_str& menuString, const int& netID = -1, const int& delayMS = 0);
 
 private:
-	GameClient* m_pClient = NULL;
+	GameClient * m_pClient = NULL;
 
 };
 

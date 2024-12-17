@@ -26,6 +26,9 @@ using nova_ostream =   std::ostringstream;
 using nova_fstream =   std::fstream;
 using nova_io =        std::ios;
 using nova_stringarr = std::vector<nova_str>;
+using nova_clock =     std::chrono::steady_clock;
+using nova_clock_sys = std::chrono::system_clock;
+using nova_highres_clock = std::chrono::high_resolution_clock;
 
 using u8 =             uint8_t;
 using u16 =            uint16_t;
