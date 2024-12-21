@@ -75,7 +75,7 @@ public:
 	uint16_t                              GetLockIndex() const { return m_lockIndex; }
 	uint8_t                               GetDamage() const { return m_damage; }
 	bool                                  HasFlag(const uint16_t& flag);
-
+	ItemInfo                              *GetItemInfo();
 
 	// set
 	void                                  SetForeground(const uint16_t& tileID);
@@ -84,6 +84,7 @@ public:
 	void                                  SetFlags(const uint16_t& flags) { m_flags = flags; }
 	void                                  ToggleFlag(const uint16_t& flag, const bool& bActivate = false);
 	void                                  SetIndex(const uint16_t& index) { m_index = index; }
+	void                                  SetLockIndex(const uint16_t& lockIndex) { m_lockIndex = lockIndex; }
 	void                                  SetDamage(const uint8_t& damage) { m_damage = damage; }
 
 	// fn

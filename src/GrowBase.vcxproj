@@ -163,6 +163,7 @@
     <ClCompile Include="World\Tile.cpp" />
     <ClCompile Include="World\World.cpp" />
     <ClCompile Include="World\WorldsManager.cpp" />
+    <ClCompile Include="World\WorldTileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="World\Tile.h" />
     <ClInclude Include="World\World.h" />
     <ClInclude Include="World\WorldsManager.h" />
+    <ClInclude Include="World\WorldTileMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

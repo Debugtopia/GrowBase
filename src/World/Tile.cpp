@@ -25,6 +25,18 @@ bool Tile::HasFlag(const uint16_t& flag)
 	return m_flags & flag; 
 }
 
+ItemInfo* Tile::GetItemInfo()
+{
+	if (m_foreground != ITEM_ID_BLANK)
+	{
+		// getting foreground item info
+		return GetItemInfoManager()->GetItemByID(m_foreground);
+	}
+
+	// getting background item info instead
+	return GetItemInfoManager()->GetItemByID(m_background);
+}
+
 void Tile::ToggleFlag(const uint16_t& flag, const bool& bActivate)
 {
 	if (HasFlag(flag) && bActivate == false)

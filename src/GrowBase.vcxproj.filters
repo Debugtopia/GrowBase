@@ -24,6 +24,7 @@
     <ClCompile Include="Client\VariantFunc.cpp" />
     <ClCompile Include="Client\PlayerItems.cpp" />
     <ClCompile Include="World\Tile.cpp" />
+    <ClCompile Include="World\WorldTileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -58,5 +59,6 @@
     <ClInclude Include="Client\PlayerItems.h" />
     <ClInclude Include="SDK\Builders\DialogBuilder.h" />
     <ClInclude Include="World\Tile.h" />
+    <ClInclude Include="World\WorldTileMap.h" />
   </ItemGroup>
 </Project>
