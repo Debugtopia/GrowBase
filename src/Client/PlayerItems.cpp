@@ -22,6 +22,31 @@ PlayerItems::PlayerItems()
 	m_items.emplace_back(wrench);
 }
 
+uint16_t PlayerItems::GetCloth(const uint8_t& bodyPart, const bool& bTempCloth)
+{
+	if (bodyPart < 0 || bodyPart > NUM_CLOTHES)
+	{
+		return ITEM_ID_BLANK;
+	}
+
+	if (bTempCloth)
+	{
+		return m_tempClothes[bodyPart];
+	}
+
+	return m_clothes[bodyPart];
+}
+
+uint16_t PlayerItems::GetTempCloth(const uint8_t& bodyPart)
+{
+	if (bodyPart < 0 || bodyPart > NUM_CLOTHES)
+	{
+		return ITEM_ID_BLANK;
+	}
+
+	return m_tempClothes[bodyPart];
+}
+
 int PlayerItems::GetBackpackUpgradePrice()
 {
 	switch (m_slots)

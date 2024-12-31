@@ -62,6 +62,73 @@ Tile* WorldTileMap::GetTile(const CL_Vec2i& vec)
 	return &m_tiles[vec.X + vec.Y * m_width];
 }
 
+size_t WorldTileMap::GetMemoryEstimated(const bool& bClientSide, const float& fClientVersion, const uint16_t& worldMapVersion)
+{
+	size_t estimated = 0;
+	estimated += sizeof(int); // map width
+	estimated += sizeof(int); // map height
+	estimated += sizeof(int); // map tiles size(width * height)
+
+	if (bClientSide && fClientVersion >= 4.31f)
+	{
+		// some new ubisoft garbage for client side only
+		estimated += sizeof(int);
+		estimated += sizeof(uint8_t);
+	}
+
+	for (int i = 0; i < m_tiles.size(); i++)
+	{
+		Tile * pTile = &m_tiles[i];
+		if (pTile == NULL)
+		{
+			// tile is null
+			continue;
+		}
+
+		estimated += pTile->GetMemoryEstimated(bClientSide, fClientVersion, worldMapVersion);
+	}
+
+	return estimated;
+}
+
+void WorldTileMap::Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide, const float& fClientVersion, const uint16_t& worldMapVersion)
+{
+    if (pData == NULL)
+	{
+        // data is null
+		return;
+	}
+
+	int width = m_width;
+	int height = m_height;
+	MemorySerializeRaw(width, pData, memOffset, true);
+	MemorySerializeRaw(height, pData, memOffset, true);
+
+	int tiles_length = m_width * m_height;
+	MemorySerializeRaw(tiles_length, pData, memOffset, true);
+	
+	if (bClientSide && fClientVersion >= 4.31f)
+	{
+		// some new ubisoft garbage for client side only
+		int zero = 0;
+		uint8_t zero2 = 0;
+		MemorySerializeRaw(zero, pData, memOffset, true);
+		MemorySerializeRaw(zero2, pData, memOffset, true);
+	}
+
+	for (int i = 0; i < m_tiles.size(); i++)
+	{
+		Tile * pTile = &m_tiles[i];
+		if (pTile == NULL)
+		{
+			// tile is null
+			continue;
+		}
+
+		pTile->Serialize(pData, memOffset, bClientSide, fClientVersion, worldMapVersion);
+	}
+}
+
 void WorldTileMap::ChooseVisualBackground(Tile* pTile, ItemInfo* pItemInfo, int& textureOffsetX, int& textureOffsetY)
 {
 	if (pTile == NULL || pItemInfo == NULL)
@@ -647,7 +714,6 @@ void WorldTileMap::GenerateTerrain(const uint8_t& terraformType, uint8_t width, 
 	m_height = height;
 	m_tiles.clear();
 	m_tiles.resize(width * height);
-	m_spawnPoint = CL_Vec2f(0, 0);
 	switch (terraformType)
 	{
 		case TERRATYPE_THEMONUCLEAR:
@@ -809,13 +875,16 @@ void WorldTileMap::GenerateTerrain(const uint8_t& terraformType, uint8_t width, 
 							tile.SetBackground(ITEM_ID_CAVE_BACKGROUND);
 							m_spawnPoint = CL_Vec2f((float)(index % m_width) * 32.f + 5.f, (float)(index / m_width) * 32.f);
 						}
+						else
+						{
+							// add something above the dirt layer except on the main door if you want here
+						}
 					}
 
 					if (y >= currentHeight)
 					{
 						tile.SetForeground(ITEM_ID_DIRT);
 						tile.SetBackground(ITEM_ID_CAVE_BACKGROUND);
-
 						if (y >= currentHeight + 1 && y < bedrockHeight && std::rand() % 80 <= 1 && x > 0 && x < width)
 						{
 							// rocks

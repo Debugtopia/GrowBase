@@ -1,11 +1,16 @@
 #ifndef BASEAPP_H
 #define BASEAPP_H
 #include <string>
+#include <chrono>
+#include <stdio.h>
+#include <stdarg.h>
 #include <cstring>
 #include <cstdint>
 #include <fstream>
 #include <sstream>
 #include <memory>
+#include <mutex>
+#include <thread>
 
 
 
@@ -50,7 +55,8 @@ using i64 =            int64_t;
 void   nova_memcopy(void* pSourceTo, const void* pSource, size_t sourceSize, int& offset);
 void   nova_strcopy(void* pSourceTo, const std::string& str, size_t sourceSize, int& offset);
 void   nova_dealloc(void* pSource);
-
+void   nova_delete(void* pSource);
+void   nova_delete_arr(void* pSource);
 
 
 
@@ -115,7 +121,9 @@ enum class eLogonMode
 void   LogMsg(const char* traceStr, ...);
 void   LogError(const char* traceStr, ...);
 
-
+// log funcs
+void   LogMsgSafe(const char* traceStr, ...);
+void   LogErrorSafe(const char* traceStr, ...);
 
 Config GetConfig();
 class BaseApp

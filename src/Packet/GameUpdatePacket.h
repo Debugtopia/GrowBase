@@ -75,7 +75,7 @@ enum eGamePacketFlags
 	NET_GAME_PACKET_FLAG_UPDATE = 0x1,
 	NET_GAME_PACKET_FLAG_FLYING = 0x2,
 	NET_GAME_PACKET_FLAG_RESET_VISUAL_STATE = 0x4,
-	NET_GAME_PACKET_FLAG_EXTENDED = 0x8,
+	NET_GAME_PACKET_FLAG_EXTENDED = 0x8, // packet contains extended data
 	NET_GAME_PACKET_FLAG_FACING_LEFT = 0x10,
 	NET_GAME_PACKET_FLAG_ON_SOLID = 0x20,
 	NET_GAME_PACKET_FLAG_ON_FIRE_DAMAGE = 0x40,
@@ -104,6 +104,8 @@ enum eGamePacketFlags
 };
 
 #pragma pack(push, 1)
+
+// packet structure taken from beef - thanks to kevz
 typedef struct gameupdatepacket_t
 {
 	//offset 0
@@ -280,16 +282,27 @@ typedef struct gameupdatepacket_t
 	uint8_t      data[];
 } GameUpdatePacket;
 
+static uint8_t * GetExtendedDataPointerFromTankPacket(gameupdatepacket_t packet)
+{
+	if (packet.data == NULL)
+	{
+		return NULL;
+	}
+
+	return packet.data;
+}
+
 typedef struct playermoving_t
 {
-	int     netID;
+	int     offsetID = 0;
+	int     netID = 0;
 	int32_t flags = 0;
 
-	float   startX;
-	float   startY;
+	float   startX = 0.f;
+	float   startY = 0.f;
 
-	float   destX;
-	float   destY;
+	float   destX = 0.f;
+	float   destY = 0.f;
 } PlayerMoving;
 
 #pragma pack(pop)

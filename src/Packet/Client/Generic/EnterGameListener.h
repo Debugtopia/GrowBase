@@ -30,7 +30,8 @@ namespace GrowPacketsListener
 		->AddURLButton("source_code", "`wGithub Repository``", "https://github.com/debugtopia/GrowBase", "Do you wish to open the official Github repository for GrowBase's source code?")
 		->EndDialog("gazette", "", "OK");
 
-		pClient->GetFunc().OnDialogRequest(dialog.Build());
+		VariantSender::OnDialogRequest(pClient, dialog.Build());
+		pClient->SendInventoryState();
 	}
 
 } // namespace GrowPacketsListener

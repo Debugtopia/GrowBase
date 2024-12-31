@@ -3,6 +3,8 @@
 #include <string>
 #include <chrono>
 
+#include <World/TileExtra.h>
+
 #include <SDK/Proton/Math.h>
 
 //eTileFlags
@@ -75,11 +77,13 @@ public:
 	uint16_t                              GetLockIndex() const { return m_lockIndex; }
 	uint8_t                               GetDamage() const { return m_damage; }
 	bool                                  HasFlag(const uint16_t& flag);
+	TileExtra                             *GetTileExtra() { return m_pExtraData; }
 	ItemInfo                              *GetItemInfo();
+	size_t                                GetMemoryEstimated(const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
 
 	// set
-	void                                  SetForeground(const uint16_t& tileID);
-	void                                  SetBackground(const uint16_t& tileID);
+	bool                                  SetForeground(const uint16_t& tileID);
+	bool                                  SetBackground(const uint16_t& tileID);
 	void                                  SetParent(const uint16_t& lockIndex) { m_parent = lockIndex; }
 	void                                  SetFlags(const uint16_t& flags) { m_flags = flags; }
 	void                                  ToggleFlag(const uint16_t& flag, const bool& bActivate = false);
@@ -89,11 +93,14 @@ public:
 
 	// fn
 	void                                  ResetNeccesaryFlags();
+	void                                  ResetTileExtra();
 
+	void                                  Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
+    void                                  Load(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const uint16_t& worldMapVersion = 5);
+	
 public:
-	std::chrono::steady_clock::time_point m_damageTick;
-	std::chrono::steady_clock::time_point m_sfxTick;
-	std::chrono::steady_clock::time_point m_fishTick;
+	std::chrono::steady_clock::time_point DamageTick;
+	std::chrono::steady_clock::time_point TileFxTick;
 
 private:
 	uint16_t                              m_foreground = ITEM_ID_BLANK;
@@ -101,8 +108,9 @@ private:
 	uint16_t                              m_parent = 0; // the index(x + y * width) of the parent lock
 	uint16_t                              m_flags = TILEFLAGS_NONE;
 
-	// server side information
+	TileExtra                             *m_pExtraData = NULL;
 
+	// server side information
 	uint16_t                              m_index = 0; // the index(x + y * width) of this tile
 	uint16_t                              m_lockIndex = 0; // the index(x + y * width) of the world lock
 	uint8_t                               m_damage = 0; // the amount of damage, that has been applied to this tile

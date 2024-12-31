@@ -43,4 +43,5 @@ target_precompile_headers(GrowBase PRIVATE ${PCH_HEADER})
 # target definitions
 target_compile_definitions(GrowBase PRIVATE 
     _CRT_SECURE_NO_WARNINGS
+    _WINSOCK_DEPRECATED_NO_WARNINGS
 )

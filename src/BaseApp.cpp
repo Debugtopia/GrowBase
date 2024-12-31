@@ -65,6 +65,27 @@ void nova_dealloc(void* pSource)
 	free(pSource);
 }
 
+void nova_delete(void* pSource)
+{
+	if (pSource == NULL)
+	{
+		// there is nothing to de-allocate
+		return;
+	}
+
+	delete pSource;
+}
+
+void nova_delete_arr(void* pSource)
+{
+	if (pSource == NULL)
+	{
+		// there is nothing to de-allocate
+		return;
+	}
+
+	delete[] pSource;
+}
 
 // console log funcs
 void LogMsg(const char* traceStr, ...)
@@ -113,6 +134,57 @@ void LogError(const char* traceStr, ...)
 	va_end(argsVA);
 	printf("%s\n", buffer);
 
+	if (g_logFile.is_open())
+	{
+		// logging into file
+		g_logFile << "S" + std::to_string(GetBaseApp()->GetServerID()) + ":" << GetTimeAsString() << " ERROR > " << std::string(buffer) << std::endl;
+		g_logFile.flush();
+	}
+}
+
+// log funcs
+void LogMsgSafe(const char* traceStr, ...)
+{
+	va_list argsVA;
+	const int logSize = 4096;
+	char buffer[logSize];
+	std::memset(buffer, 0, logSize);
+	va_start(argsVA, traceStr);
+
+#ifdef WIN32
+	vsnprintf_s(buffer, logSize, logSize, traceStr, argsVA);
+#elif defined(LINUX)
+	vsnprintf(buffer, logSize, traceStr, argsVA);
+#else
+	vsnprintf(buffer, logSize, traceStr, argsVA);
+#endif
+
+	va_end(argsVA);
+	if (g_logFile.is_open())
+	{
+		// logging into file
+		g_logFile << "S" + std::to_string(GetBaseApp()->GetServerID()) + ":" << GetTimeAsString() << "> " << std::string(buffer) << std::endl;
+		g_logFile.flush();
+	}
+}
+
+void LogErrorSafe(const char* traceStr, ...)
+{
+	va_list argsVA;
+	const int logSize = 4096;
+	char buffer[logSize];
+	std::memset(buffer, 0, logSize);
+	va_start(argsVA, traceStr);
+
+#ifdef WIN32
+	vsnprintf_s(buffer, logSize, logSize, traceStr, argsVA);
+#elif defined(LINUX)
+	vsnprintf(buffer, logSize, traceStr, argsVA);
+#else
+	vsnprintf(buffer, logSize, traceStr, argsVA);
+#endif
+
+	va_end(argsVA);
 	if (g_logFile.is_open())
 	{
 		// logging into file

@@ -1,7 +1,11 @@
 #ifndef WORLD_H
 #define WORLD_H
 #include <string>
+#include <vector>
+#include <functional>
 
+#include <World/WorldTileMap.h>
+#include <World/WorldObjectMap.h>
 
 enum eWorldCategories : uint8_t
 {
@@ -50,14 +54,24 @@ enum eWorldCategories : uint8_t
 #define WORLD_DEFAULT_HEIGHT 60
 #define WORLD_MAX_NPCS 255 // how many npcs a world can have inside
 
+// fowarded definitions
+class GameClient;
+
 class World
 {
 public:
 	World(const std::string& name, const uint8_t& width = WORLD_DEFAULT_WIDTH, const uint8_t& height = WORLD_DEFAULT_HEIGHT);
 	~World();
 
+
+	// broadcasting
+	void Broadcast(std::function<void(int, GameClient*)> fCall);
+	void Broadcast(std::function<void(GameClient*)> fCall);
+
+
 	// get
 	int                               GetID() const { return m_ID; }
+	int                               GetNetID(const bool& bIncrease = false) { return bIncrease ? m_netID++ : m_netID; }
 	std::string                       GetName() const { return m_name; }
 	uint16_t                          GetMapVersion() const { return m_mapVersion; }
 	int                               GetBits() const { return m_bits; }
@@ -66,10 +80,17 @@ public:
 	int                               GetActiveWeather() const { return m_activeWeather; }
 	int                               GetBaseWeather() const { return m_baseWeather; }
 	int                               GetWorldOwnerID() const { return m_ownerID; }
-	uint16_t                          GetLockIndex() const { return m_lockIndex; }
+	uint16_t                          GetWorldLockIndex() const { return m_lockIndex; }
 	uint8_t                           GetCategory() const { return m_category; }
 	std::string                       GetCategoryAsString();
 	int                               GetPlayersCount();
+
+
+	WorldTileMap                      *GetWorldTileMap() { return m_pWorldTileMap; }
+	WorldObjectMap                    *GetWorldObjectMap() { return m_pWorldObjectMap; }
+	std::vector<GameClient*>          GetClients() { return m_clients; }
+
+	size_t                            GetMemoryEstimated(const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
 
 
 	// set
@@ -79,18 +100,31 @@ public:
 	void                              SetBaseWeather(const int& weather) { m_baseWeather = weather; }
 	void                              SetWeather(const int& weather) { m_activeWeather = weather; }
 	void                              SetWorldOwnerID(const int& userID) { m_ownerID = userID; }
-	void                              SetLockIndex(const int& index) { m_lockIndex = index; }
+	void                              SetWorldLockIndex(const int& index) { m_lockIndex = index; }
 	void                              SetCategory(const uint8_t& category) { m_category = category; }
 
 
 	// fn
+	void                              Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
+    void                              Load(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const uint16_t& worldMapVersion = 5);
 
+
+	// Tile change requests
+	void                              HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdatePacket * pPacket);
+	void                              HandlePacketTileChangeRequestPlace(GameClient * pClient, GameUpdatePacket * pPacket, ItemInfo * pItemInfo);
+	void                              HandlePacketTileChangeRequestConsume(GameClient * pClient, GameUpdatePacket * pPacket, ItemInfo * pItemInfo);
+	void                              HandlePacketTileChangeRequestWrench(GameClient * pClient, GameUpdatePacket * pPacket);
 
 private:
 	int                               m_ID = -1;
+	int                               m_netID = 0;
 	std::string                       m_name = "";
-	uint16_t                          m_mapVersion = 23; // the version we serialize the world tiles for
+	uint16_t                          m_mapVersion = 5; // the version we serialize the world tiles for
 	int                               m_bits = 0;
+
+	WorldTileMap                      *m_pWorldTileMap = NULL; // world tile map
+	WorldObjectMap                    *m_pWorldObjectMap = NULL; // world object map
+	std::vector<GameClient*>          m_clients;
 
 	int                               m_activeWeather = 4; // active weather machine ID in the world
 	int                               m_baseWeather = 4; // weather machine ID that it resets to after deactivating the active one

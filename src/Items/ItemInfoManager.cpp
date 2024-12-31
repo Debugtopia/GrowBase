@@ -802,6 +802,12 @@ bool ItemInfoManager::Load()
         return false;
     }
 
+    TextScanner hashes;
+    if (!hashes.LoadFile("file_hashes.txt"))
+    {
+        return false;
+    }
+
     int lastID = 0;
     std::vector<nova_str> lines = t.GetLines();
     for (int i = 0; i < lines.size(); i++)
@@ -916,6 +922,7 @@ bool ItemInfoManager::Load()
             }
 
             pItem->textureExtra = tokens[2];
+            //pItem->textureExtraHash = hashes.GetParmUInt(pItem->textureExtra, 1); // get hash from file_hashes.txt
             pItem->animMS = std::atoi(tokens[4].c_str());
         }
 

@@ -84,6 +84,11 @@ int TextScanner::GetParmInt(std::string label, int index, std::string token)
 	return std::atoi(GetParmString(label, index, token).c_str());
 }
 
+uint32_t TextScanner::GetParmUInt(std::string label, int index, std::string token) 
+{
+	return (uint32_t)std::atoi(GetParmString(label, index, token).c_str());
+}
+
 float TextScanner::GetParmFloat(std::string label, int index, std::string token) 
 {
 	return (float)std::atof(GetParmString(label, index, token).c_str());

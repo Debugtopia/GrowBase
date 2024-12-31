@@ -16,6 +16,7 @@ public:
 	bool LoadFile(const std::string& fName);
 	bool SaveFile(const std::string& fName);
 	std::string GetParmString(std::string label, int index, std::string token = "|");
+	uint32_t GetParmUInt(std::string label, int index, std::string token = "|");
 	int GetParmInt(std::string label, int index, std::string token = "|");
 	float GetParmFloat(std::string label, int index, std::string token = "|");
 	std::string GetParmStringFromLine(int lineNum, int index, std::string token = "|");

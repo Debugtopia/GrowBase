@@ -37,7 +37,7 @@ bool NetSocket::InitServer(const char* pHost, uint16_t tcpPort)
 	int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (res != 0)
 	{
-		LogError("failed to setup wsa data, exception: %s", res);
+		LogError("failed to setup wsa data, exception type: %d", res);
 		return false;
 	}
 #endif
@@ -85,55 +85,7 @@ void NetSocket::Sync()
 
 	// resyncing means we send an update status packet, with the list of active connections in the server, every game server gets it updated when needed.
 	// that's how we keep track of the game servers in the entire network(some of them are on different machines than others)
-	size_t resyncPacketLen = 4;
-	int offset = 0;
-	for (int i = 0; i < m_connections.size(); i++)
-	{
-		ClientData client = m_connections[i];
-		resyncPacketLen += sizeof(ClientSocket);
-		resyncPacketLen += 2 + client.address.length();
-		resyncPacketLen += sizeof(u16); // tcpCommunicationPort
-
-		resyncPacketLen += sizeof(int); // ID
-		resyncPacketLen += sizeof(int); // enet server port
-
-		resyncPacketLen += sizeof(bool); // bQueued
-	}
-
-	GrowPacket *pGrowResyncPacket = (GrowPacket*)std::malloc(sizeof(GrowPacket) + resyncPacketLen);
-	if (pGrowResyncPacket == NULL)
-	{
-		// failed allocating data for pGrowtErrorPacket, well... since nova_dealloc checks for null pointers to prevent crashs upon free-ing, we won't have issues freeing it for security anyways.
-		nova_dealloc(pGrowResyncPacket);
-		return;
-	}
-
-	pGrowResyncPacket->type = NET_GROW_PACKET_UPDATE_STATUS;
-	pGrowResyncPacket->flags = NET_GROW_PACKET_FLAG_EXTENDED_DATA;
-	pGrowResyncPacket->dataLength = (uint32_t)resyncPacketLen;
-
-	// writing connections data to the packet
-	int connectionsCount = (int)m_connections.size();
-	MemorySerializeRaw(connectionsCount, pGrowResyncPacket->data, offset, true);
-	for (int i = 0; i < m_connections.size(); i++)
-	{
-		ClientData client = m_connections[i];
-		MemorySerializeRaw(client.socket, pGrowResyncPacket->data, offset, true);
-		MemorySerialize(client.address, pGrowResyncPacket->data, offset, true);
-		MemorySerializeRaw(client.tcpCommunicationPort, pGrowResyncPacket->data, offset, true);
-		MemorySerializeRaw(client.ID, pGrowResyncPacket->data, offset, true);
-		MemorySerializeRaw(client.enetPort, pGrowResyncPacket->data, offset, true);
-		MemorySerializeRaw(client.bQueued, pGrowResyncPacket->data, offset, true);
-	}
-
-	// sending the packet to all connections
-	for (int i = 0; i < m_connections.size(); i++)
-	{
-		ClientData client = m_connections[i];
-		// send the packet
-	}
-
-	nova_dealloc(pGrowResyncPacket); // dealloc the packet to not leak memory
+	// find out how syncing works
 }
 
 void NetSocket::AcceptConnections()
@@ -178,67 +130,16 @@ void NetSocket::AcceptConnections()
 				return;
 			}
 
-			// getting auth token
-			nova_str authToken = nova_str(buffer, bufferLength);
-			nova_str rawToken = base64_decode(authToken); 			// decyphered auth token
-			nova_stringarr tokenizedAuth = Utils::StringTokenize(rawToken, "|");
-			if (tokenizedAuth.size() < 2)
-			{
-				// auth token did not contain needed information
-				nova_str reply = "Ouch! That did not work, good luck, pleasant...";
-				size_t replyPacketLen = 2 + reply.length();
-				int offset = 0;
+			LogMsg("game server S%d is trying to connect to network, address: %s:%d", client.ID, client.address.c_str(), client.tcpCommunicationPort);
 
-				GrowPacket *pGrowErrorPacket = (GrowPacket*)std::malloc(sizeof(GrowPacket) + replyPacketLen);
-				if (pGrowErrorPacket == NULL)
-				{
-					// failed allocating data for pGrowtErrorPacket, well... since nova_dealloc checks for null pointers to prevent crashs upon free-ing, we won't have issues freeing it for security anyways.
-					nova_dealloc(pGrowErrorPacket);
-					return;
-				}
-
-				pGrowErrorPacket->type = NET_GROW_PACKET_CONSOLE_OUTPUT;
-				MemorySerialize(reply, pGrowErrorPacket->data, offset, true);
-
-				// TODO: SendPacket function
-				nova_dealloc(pGrowErrorPacket);
-				client_socket_close(clientSocket);
-				return;
-			}
-
-			client.address = tokenizedAuth[0];
-			nova_str authPassword = tokenizedAuth[1];
-			if (authPassword != SERVER_AUTH_KEY)
-			{
-				// auth password incorrect
-				nova_str reply = "Ouch! That did not work, good luck, pleasant...";
-				size_t replyPacketLen = 2 + reply.length();
-				int offset = 0;
-
-				GrowPacket* pGrowErrorPacket = (GrowPacket*)std::malloc(sizeof(GrowPacket) + replyPacketLen);
-				if (pGrowErrorPacket == NULL)
-				{
-					// failed allocating data for pGrowtErrorPacket, well... since nova_dealloc checks for null pointers to prevent crashs upon free-ing, we won't have issues freeing it for security anyways.
-					nova_dealloc(pGrowErrorPacket);
-					return;
-				}
-
-				pGrowErrorPacket->type = NET_GROW_PACKET_CONSOLE_OUTPUT;
-				MemorySerialize(reply, pGrowErrorPacket->data, offset, true);
-
-				// TODO: SendPacket function
-				nova_dealloc(pGrowErrorPacket);
-				client_socket_close(clientSocket);
-				return;
-			}
-
-			LogMsg("game server S%d connected to network, address: %s:%d", client.ID, client.address.c_str(), client.tcpCommunicationPort);
+			// auth packet response we send to client
 			GrowPacket netPacket;
 			netPacket.type = NET_GROW_PACKET_INIT_HOST;
 			netPacket.serverID = client.ID;
 			netPacket.tcpCommunicationPort = client.tcpCommunicationPort;
 			netPacket.enetPort = client.enetPort;
 
+			// figure how to validate & authenticate client
 
 			m_connections.emplace_back(client);
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -256,9 +157,11 @@ void NetSocket::ProccessIncoming()
 	{
 		if (m_bRunningAsAServer)
 		{
+			// handle packets here as logon-server
 		}
 		else
 		{
+			// handle packets here as sub-server
 		}
 	}
 }

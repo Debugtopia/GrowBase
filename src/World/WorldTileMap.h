@@ -31,14 +31,14 @@ public:
 	{
 		m_width = 100;
 		m_height = 60;
-		m_tiles.reserve(m_width * m_height);
+		m_tiles.resize(m_width * m_height);
 	}
 
 	WorldTileMap(const uint8_t& width = 100, const uint8_t& height = 60)
 	{
 		m_width = width;
 		m_height = height;
-		m_tiles.reserve(m_width * m_height);
+		m_tiles.resize(m_width * m_height);
 	}
 
 	~WorldTileMap() = default;
@@ -57,7 +57,7 @@ public:
 	Tile                                  *GetTile(const float& x, const float& y);
 	Tile                                  *GetTile(const CL_Vec2f& vec);
 	Tile                                  *GetTile(const CL_Vec2i& vec);
-
+	size_t                                GetMemoryEstimated(const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
 
 
 	// set
@@ -66,6 +66,9 @@ public:
 
 
 	// fn
+	void                                  Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
+    void                                  Load(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const uint16_t& worldMapVersion = 5);
+
 	void                                  ChooseVisualBackground(Tile* pTile, ItemInfo* pItemInfo, int& textureOffsetX, int& textureOffsetY);
 	void                                  ChooseVisualForeground(Tile* pTile, ItemInfo* pItemInfo, int& textureOffsetX, int& textureOffsetY);
 

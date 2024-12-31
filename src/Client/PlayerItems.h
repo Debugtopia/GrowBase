@@ -31,6 +31,8 @@ public:
 	unsigned int                        GetSkinColor() const { return m_skinColor; }
 	uint16_t*                           GetClothes() { return m_clothes; }
 	uint16_t*                           GetTempClothes() { return m_tempClothes; }
+	uint16_t                            GetCloth(const uint8_t& bodyPart, const bool& bTempCloth = true);
+	uint16_t                            GetTempCloth(const uint8_t& bodyPart);
 
 	int                                 GetBackpackUpgradePrice();
 

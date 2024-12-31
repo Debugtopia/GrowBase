@@ -5,9 +5,13 @@
 
 // text packets
 #include <Packet/Client/LogonPacketListener.h>
+
 // generic action packets
 #include <Packet/Client/Generic/EnterGameListener.h>
+#include <Packet/Client/Generic/JoinRequestListener.h>
+
 // tank update packets
+#include <Packet/Client/Tank/StateListener.h>
 
 
 PacketHandler g_handler;
@@ -166,6 +170,12 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 				return;
 			}
 
+			if (textPacket.starts_with("action|join_request"))
+			{
+				GrowPacketsListener::OnHandleJoinRequest(pClient, textPacket.c_str());
+				return;
+			}
+
 			break;
 		}
 
@@ -207,10 +217,43 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 			{
 				case NET_GAME_PACKET_STATE:
 				{
-			        // this packet is what client sends when he is inside world, moving(walking)
-				    // we do not have worlds yet, so cannot handle
-					break;
+			        TankPacketsListener::OnHandleStatePacket(pClient, pTankPacket);
+					return;
 			    }
+
+				case NET_GAME_PACKET_TILE_CHANGE_REQUEST:
+				{
+					World * pWorld = pClient->GetWorld();
+					if (pWorld == NULL)
+					{
+						// world was null
+						return;
+					}
+
+					ItemInfo * pItemInfo = GetItemInfoManager()->GetItemByID(pTankPacket->intData);
+					if (pItemInfo == NULL)
+					{
+						// item info was not found
+						return;
+					}
+
+					switch (pItemInfo->type)
+					{
+					    case TYPE_FIST:
+						    pWorld->HandlePacketTileChangeRequestPunch(pClient, pTankPacket);
+						    break;
+
+					    case TYPE_WRENCH:
+						    pWorld->HandlePacketTileChangeRequestWrench(pClient, pTankPacket);
+						    break;
+
+					    default:
+						    pWorld->HandlePacketTileChangeRequestPlace(pClient, pTankPacket, pItemInfo);
+						    break;
+					}
+
+					break;
+				}
 			}
 
 			break;
