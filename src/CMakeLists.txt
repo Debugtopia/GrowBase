@@ -26,16 +26,16 @@ if (WIN32)
         ws2_32.lib
         winmm.lib
     )
+
+    target_link_libraries(GrowBase PRIVATE 
+        optimized ${CMAKE_SOURCE_DIR}/lib/enet/libs/Release/enet.lib
+        debug ${CMAKE_SOURCE_DIR}/lib/enet/libs/Debug/enet.lib
+    )
 elseif (UNIX)
     target_link_libraries(GrowBase PRIVATE 
         pthread
     )
 endif()
-
-target_link_libraries(GrowBase PRIVATE 
-    optimized ${CMAKE_SOURCE_DIR}/lib/enet/libs/Release/enet.lib
-    debug ${CMAKE_SOURCE_DIR}/lib/enet/libs/Debug/enet.lib
-)
 
 # target precompiled headers
 target_precompile_headers(GrowBase PRIVATE ${PCH_HEADER})
