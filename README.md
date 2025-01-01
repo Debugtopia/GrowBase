@@ -17,7 +17,17 @@ Config setup:
 
 
 Linux setup:
-? will do as soon as i get linux machine
+- installing necessary packages
+```bash
+sudo apt-get install build-essential cmake
+```
+- run build_release.sh or build_debug.sh, depending on the build conf you prefer
+- move the binary to /bin/ directory
+```bash
+# current path: GrowBase/build/
+mv src/GrowBase ..bin/
+```
+- edit the address, basePort from /bin/config.txt to start your server
 
 Please don't take our credits out of BaseApp.h file!
 Credit us for our work
