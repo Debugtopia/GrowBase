@@ -17,6 +17,7 @@ bool GrowConfig::Load(Config& conf)
 		return false;
 	}
 
+	conf.address = t.GetParmString("address", 1);
 	conf.logonPort = t.GetParmInt("logon_port", 1);
 	conf.basePort = t.GetParmInt("base_port", 1);
 	conf.logonPort = t.GetParmInt("logon_port", 1);

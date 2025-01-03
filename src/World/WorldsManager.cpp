@@ -14,6 +14,63 @@ WorldsManager::~WorldsManager()
 	//
 }
 
+World * WorldsManager::GetWorldByName(const std::string& fName)
+{
+	bool bFound = false;
+	for (int i = 0; i < m_activeWorlds.size(); i++)
+	{
+		World * pWorld = m_activeWorlds[i];
+		if (pWorld == NULL)
+		{
+			// world is null
+			continue;
+		}
+
+		nova_str upper_name = Utils::StringUppercase(fName);
+		if (pWorld->GetName() != upper_name)
+		{
+			// name mismatching
+			continue;
+		}
+
+		bFound = true;
+		return pWorld;
+	}
+
+	if (!bFound)
+	{
+		// get from db
+		return NULL;
+	}
+
+	return NULL;
+}
+
+World * WorldsManager::GetWorldByID(const int& ID)
+{
+	bool bFound = false;
+	for (int i = 0; i < m_activeWorlds.size(); i++)
+	{
+		World* pWorld = m_activeWorlds[i];
+		if (pWorld == NULL || pWorld->GetID() != ID)
+		{
+			// world is null or ID mismatch
+			continue;
+		}
+
+		bFound = true;
+		return pWorld;
+	}
+
+	if (!bFound)
+	{
+		// get from db
+		return NULL;
+	}
+
+	return NULL;
+}
+
 void WorldsManager::SendWorldOffers(GameClient* pClient, const bool& bOnlineMessage)
 {
 	if (pClient == NULL)
@@ -56,13 +113,14 @@ bool WorldsManager::Enter(GameClient * pClient, const char * fName, CL_Vec2f spa
 		return false;
 	}
 
-	nova_str name_to_use = Utils::StringUppercase(fName);
-	World * pWorld = NULL;
+	nova_str upper_name = Utils::StringUppercase(fName);
+	World *  pWorld = GetWorldByName(upper_name);
 	if (pWorld == NULL)
 	{
 		// creating a new world object
-		pWorld = new World(name_to_use);
+		pWorld = new World(upper_name);
 		pWorld->GetWorldTileMap()->GenerateTerrain(TERRATYPE_SUNNY, 100, 60);
+		m_activeWorlds.emplace_back(pWorld);
 	}
 
 	if (pWorld->HasBit(WORLDBIT_NOGO)) // missing moderator check
@@ -78,8 +136,8 @@ bool WorldsManager::Enter(GameClient * pClient, const char * fName, CL_Vec2f spa
 	}
 
 	// serializing world data and sending packet to the game client
-	int memOffset = 0;
-	size_t world_data_length = pWorld->GetMemoryEstimated(true, pClient->GetLoginDetails()->gameVersion, pWorld->GetMapVersion()); // getting the size of the world
+	int                memOffset = 0;
+	size_t             world_data_length = pWorld->GetMemoryEstimated(true, pClient->GetLoginDetails()->gameVersion, pWorld->GetMapVersion()); // getting the size of the world
 	GameUpdatePacket * pMapDataPacket = (GameUpdatePacket*)std::malloc(sizeof(GameUpdatePacket) + world_data_length);
 	if (pMapDataPacket == NULL)
 	{
@@ -105,8 +163,8 @@ bool WorldsManager::Enter(GameClient * pClient, const char * fName, CL_Vec2f spa
 		spawnPoint = pWorld->GetWorldTileMap()->GetSpawnPoint();
 	}
 
-	pClient->SetNetID(pWorld->GetNetID(true));
 	pClient->SetWorld(pWorld);
+	pClient->SetNetID(pWorld->GetNetID(true));
 	pClient->SetPosition(spawnPoint.X, spawnPoint.Y);
 	pClient->SetRespawnPos(spawnPoint.X, spawnPoint.Y);
 	VariantSender::OnSpawn(pClient, pClient->GetSpawnData(true));

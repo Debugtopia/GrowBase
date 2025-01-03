@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="BaseApp.cpp" />
-    <ClCompile Include="Client\VariantFunc.cpp" />
+    <ClCompile Include="Client\VariantSender.cpp" />
     <ClCompile Include="Client\PlayerItems.cpp" />
     <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="Server\ENetServer.cpp" />
@@ -161,7 +161,11 @@
     <ClCompile Include="SDK\Proton\Variant.cpp" />
     <ClCompile Include="Server\PacketHandler.cpp" />
     <ClCompile Include="World\Tile.cpp" />
+    <ClCompile Include="World\TileExtra.cpp" />
+    <ClCompile Include="World\TileExtraManager.cpp" />
     <ClCompile Include="World\World.cpp" />
+    <ClCompile Include="World\WorldObject.cpp" />
+    <ClCompile Include="World\WorldObjectMap.cpp" />
     <ClCompile Include="World\WorldsManager.cpp" />
     <ClCompile Include="World\WorldTileMap.cpp" />
   </ItemGroup>
@@ -169,7 +173,7 @@
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="Client\LoginDetails.h" />
     <ClInclude Include="Client\PlayerItems.h" />
-    <ClInclude Include="Client\VariantFunc.h" />
+    <ClInclude Include="Client\VariantSender.h" />
     <ClInclude Include="Net\GrowPacket.h" />
     <ClInclude Include="Net\NetSocket.h" />
     <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />
@@ -196,7 +200,11 @@
     <ClInclude Include="SDK\Proton\Variant.h" />
     <ClInclude Include="SDK\TimeWrapper.h" />
     <ClInclude Include="World\Tile.h" />
+    <ClInclude Include="World\TileExtra.h" />
+    <ClInclude Include="World\TileExtraManager.h" />
     <ClInclude Include="World\World.h" />
+    <ClInclude Include="World\WorldObject.h" />
+    <ClInclude Include="World\WorldObjectMap.h" />
     <ClInclude Include="World\WorldsManager.h" />
     <ClInclude Include="World\WorldTileMap.h" />
   </ItemGroup>

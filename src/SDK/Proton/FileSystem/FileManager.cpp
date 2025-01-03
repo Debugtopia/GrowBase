@@ -18,7 +18,7 @@ void FileInstance::Kill()
 {
 	if (m_pData)
 	{
-		delete m_pData;
+		nova_delete(m_pData);
 	}
 
 	m_size = 0;
@@ -49,7 +49,7 @@ FileManager::~FileManager()
 	{
 		FileSystem* pFileSystem = *m_fileSystems.begin();
 		m_fileSystems.pop_front();
-		delete pFileSystem;
+		nova_delete(pFileSystem);
 	}
 }
 
@@ -70,8 +70,8 @@ StreamingInstance* FileManager::GetStreaming(std::string fileName, int* pSizeOut
 
 	StreamingInstanceFile* pStreamingFile = new StreamingInstanceFile();
 	if (!pStreamingFile->Open(fileName)) 
-	{ 
-		delete pStreamingFile;
+	{
+		nova_delete(pStreamingFile);
 		return NULL;
 	}
 
@@ -208,10 +208,10 @@ bool FileManager::Copy(std::string srcFile, std::string dstFile)
 	const int bufferSize = 512;
 	uint8_t buff[bufferSize];
 
-	FILE *fp = fopen(dstFile.c_str(), "wb");
-	if (!fp) 
+	FILE * pFile = fopen(dstFile.c_str(), "wb");
+	if (!pFile)
 	{
-		delete pSrc;
+		nova_delete(pSrc);
 		return false;
 	}
 
@@ -220,11 +220,11 @@ bool FileManager::Copy(std::string srcFile, std::string dstFile)
 		int bytesRead = pSrc->Read(buff, bufferSize);
 		if (bytesRead > 0)
 		{
-			fwrite(buff, bytesRead, 1, fp);
+			fwrite(buff, bytesRead, 1, pFile);
 		}
 	}
 
-	fclose(fp);
-	delete pSrc;
+	fclose(pFile);
+	nova_delete(pSrc);
 	return true;
 }

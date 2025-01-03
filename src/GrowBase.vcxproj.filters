@@ -21,10 +21,14 @@
     <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="World\WorldsManager.cpp" />
     <ClCompile Include="World\World.cpp" />
-    <ClCompile Include="Client\VariantFunc.cpp" />
     <ClCompile Include="Client\PlayerItems.cpp" />
     <ClCompile Include="World\Tile.cpp" />
     <ClCompile Include="World\WorldTileMap.cpp" />
+    <ClCompile Include="Client\VariantSender.cpp" />
+    <ClCompile Include="World\WorldObject.cpp" />
+    <ClCompile Include="World\WorldObjectMap.cpp" />
+    <ClCompile Include="World\TileExtra.cpp" />
+    <ClCompile Include="World\TileExtraManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -55,10 +59,14 @@
     <ClInclude Include="World\WorldsManager.h" />
     <ClInclude Include="SDK\Builders\WorldOffersBuilder.h" />
     <ClInclude Include="World\World.h" />
-    <ClInclude Include="Client\VariantFunc.h" />
     <ClInclude Include="Client\PlayerItems.h" />
     <ClInclude Include="SDK\Builders\DialogBuilder.h" />
     <ClInclude Include="World\Tile.h" />
     <ClInclude Include="World\WorldTileMap.h" />
+    <ClInclude Include="Client\VariantSender.h" />
+    <ClInclude Include="World\WorldObject.h" />
+    <ClInclude Include="World\WorldObjectMap.h" />
+    <ClInclude Include="World\TileExtra.h" />
+    <ClInclude Include="World\TileExtraManager.h" />
   </ItemGroup>
 </Project>

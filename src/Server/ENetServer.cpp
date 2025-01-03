@@ -16,7 +16,7 @@ void ENetServer::Run(const char* pAddress, uint16_t addressPort)
 {
 	if (enet_initialize() != 0)
 	{
-		/* failed to init */
+		// failed to init
 		LogError("failed to initialize enet");
 		return;
 	}
@@ -27,13 +27,17 @@ void ENetServer::Run(const char* pAddress, uint16_t addressPort)
 		return;
 	}
 
-	/* setting up enet address */
 	ENetAddress address;
+	/* Bind the server to the default localhost.
+    A specific host address can be specified by
+    enet_address_set_host(&address, "x.x.x.x"); */
+	address.host = ENET_HOST_ANY;
 	address.port = addressPort; // UDP
 	m_port = addressPort;
 	enet_address_set_host(&address, pAddress);
-	/* creating enet host */
-	m_pHost = enet_host_create(&address, GetConfig().enetMaxPeers, 10, 0, 0);
+
+	// creating enet host
+	m_pHost = enet_host_create(&address, GetConfig().enetMaxPeers, 2, 0, 0);
 	if (m_pHost == NULL)
 	{
 		/* enet host creation failed, possibly port used? */
@@ -41,7 +45,6 @@ void ENetServer::Run(const char* pAddress, uint16_t addressPort)
 		return;
 	}
 
-	//m_handler = PacketHandler(m_pHost);
 	m_pHost->checksum = enet_crc32;
 	enet_host_compress_with_range_coder(m_pHost);
 	LogMsg("enet server serving on %s:%d", pAddress, addressPort);
@@ -106,7 +109,7 @@ void ENetServer::RunEventListener()
                     }
 
 					// deleting player
-                    delete eEvent.peer->data;
+					nova_delete(eEvent.peer->data);
                     eEvent.peer->data = NULL;
                     break;
                 }

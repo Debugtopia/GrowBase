@@ -21,7 +21,7 @@ ItemInfoManager::~ItemInfoManager()
         }
 
         // de-allocating the item
-        delete pItem;
+        nova_delete(pItem);
     }
 
     m_items.clear();
@@ -865,7 +865,7 @@ bool ItemInfoManager::Load()
             if (seedColor.size() < 4 || treeColor.size() < 4)
             {
                 // failed to parse seed/tree color
-                delete pItem;
+                nova_delete(pItem);
                 return false;
             }
 

@@ -430,7 +430,7 @@ unsigned int Utils::GetHashOfFile(const std::string& fName)
 	}
 
 	hash = HashString((char*)pData, size);
-	delete[] pData;
+	nova_delete_arr(pData);
 	return hash;
 }
 

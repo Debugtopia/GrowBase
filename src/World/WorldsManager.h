@@ -20,6 +20,9 @@ public:
 	// get
 	std::vector<World*>          GetActiveWorlds() const { return m_activeWorlds; }
 
+
+	World                        *GetWorldByName(const std::string& fName);
+	World                        *GetWorldByID(const int& ID);
 	
 	// set
 

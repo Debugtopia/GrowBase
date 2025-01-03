@@ -209,5 +209,5 @@ void BaseApp::Init()
 	GetItemInfoManager()->Load();
 	GetItemInfoManager()->Serialize(5);
 
-	GetENetServer()->Run("0.0.0.0", GetConfig().basePort);
+	GetENetServer()->Run(GetConfig().address.c_str(), GetConfig().basePort);
 }
