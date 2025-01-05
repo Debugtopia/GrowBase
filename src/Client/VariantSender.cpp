@@ -47,6 +47,22 @@ void VariantSender::OnSpawn(GameClient * pClient, const nova_str& spawnData, con
 	pClient->SendVariantPacket(var, netID, delayMS);
 }
 
+void VariantSender::OnRemove(GameClient* pClient, const int& netID, const int& userID, const int& delayMS)
+{
+	// default delay for this func is -1
+	if (pClient == NULL)
+	{
+		// game client is null.
+		return;
+	}
+
+	VariantList var;
+	var.Get(0).Set("OnRemove");
+	var.Get(1).Set("netID|" + std::to_string(netID));
+	var.Get(2).Set("pId|" + std::to_string(userID)); // after 4.xx, ubisoft added userID to OnRemove for whatsoever unknown reasons...
+	pClient->SendVariantPacket(var, -1, delayMS);
+}
+
 void VariantSender::OnTalkBubble(GameClient * pClient, const int& playerNetID, const nova_str& text, const u8& bubbleType, const bool& bOverrideOld, const int& netID, const int& delayMS)
 {
 	if (pClient == NULL)

@@ -94,6 +94,7 @@ public:
 
 
 	// set
+	void                              SetNetID(const int& netID) { m_netID = netID; }
 	void                              SetName(const std::string& name) { m_name = name; }
 	int                               SetBits(const int& bits) { m_bits = bits; }
 	void                              ToggleBit(const int& bit, const bool& bSetAsActive = false);
@@ -108,6 +109,9 @@ public:
 	void                              Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
     void                              Load(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const uint16_t& worldMapVersion = 5);
 
+
+	void                              AddClient(GameClient * pClient);
+	void                              RemoveClient(GameClient * pClient);
 
 	// Tile change requests
 	void                              HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdatePacket * pPacket);

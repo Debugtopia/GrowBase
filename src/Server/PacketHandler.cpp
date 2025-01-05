@@ -9,6 +9,7 @@
 // generic action packets
 #include <Packet/Client/Generic/EnterGameListener.h>
 #include <Packet/Client/Generic/JoinRequestListener.h>
+#include <Packet/Client/Generic/QuitToExitListener.h>
 
 // tank update packets
 #include <Packet/Client/Tank/StateListener.h>
@@ -125,7 +126,7 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 		case NET_MESSAGE_GAME_MESSAGE:
 		{
 			// the genertic text message type is a text packet the client sends
-			// most common action text packets sent from the client use this msg type
+			// common action text packets related to worlds, sent from the client use this msg type
 			
 			// actions using this message type:
 			// action|quit
@@ -167,13 +168,16 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 			{
 				// world categories in main menu
 				// in 3.xx, ubisoft changed the menu, fortunarely for us, we will handle both of them based on client's version :)
-				return;
 			}
 
 			if (textPacket.starts_with("action|join_request"))
 			{
 				GrowPacketsListener::OnHandleJoinRequest(pClient, textPacket.c_str());
-				return;
+			}
+
+			if (textPacket.starts_with("action|quit_to_exit"))
+			{
+				GrowPacketsListener::OnHandleExit(pClient);
 			}
 
 			break;
@@ -181,13 +185,14 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 
 		case NET_MESSAGE_GAME_PACKET:
 		{
-			if (pConnectionPeer->data == NULL || pPacket->dataLength < 60 || pPacket->dataLength > 61)
+			if (pConnectionPeer->data == NULL || pPacket->data == NULL || pPacket->dataLength < 60 || pPacket->dataLength > 61)
 			{
 				// game client may be null
+				// packet data may be null
 				// packet may not have the lengths we support
 
 				// in this case we cannot procceed handling the incoming packet
-				LogError("failed to proccess incoming NET_MESSAGE_GAME_PACKET packet, something went wrong!(2)");
+				LogError("failed to proccess incoming NET_MESSAGE_GAME_PACKET packet, size mismatch.");
 				return;
 			}
 
@@ -201,10 +206,10 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 
 			// this message type is more complex, it contains it's own structure, original variables's name is unknown without access to the source code or reverse engineering it from the client
 			// we managed to retrieve some of them, others are named after bruteforcing them manually
-			// the structure has default size of 56 - sizeof(gameupdatepacket_t)
+			// the structure has default size of 56 - sizeof(GameUpdatePacket)
 			// there is cases where it has larger size, if in the flags column of it, has the flag NET_GAME_PACKET_FLAG_EXTENDED
 			// the flag mentioned above allows the client to read tankpacket's data column, whereas dataLength column contains the length of the "extended data" written
-			gameupdatepacket_t* pTankPacket = reinterpret_cast<gameupdatepacket_t*>(pPacket->data + 4);
+			GameUpdatePacket* pTankPacket = reinterpret_cast<GameUpdatePacket*>(pPacket->data + 4);
 			if (pTankPacket == NULL)
 			{
 				// tank packet is null

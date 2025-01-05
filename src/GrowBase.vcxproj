@@ -71,6 +71,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)..\bin\out</OutDir>
+    <IntDir>$(SolutionDir)..\bin\out\cache</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)..\bin\out</OutDir>
+    <IntDir>$(SolutionDir)..\bin\out\cache</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -105,15 +113,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../src;../lib/enet/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../src;../lib/enet/include;../lib/SFML/include;../lib/zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;../lib/enet/libs/Debug/enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../lib;../lib/enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;../lib/enet/libs/win/Debug/enet.lib;../lib/SFML/libs/win/Debug/sfml-graphics-d.lib;../lib/SFML/libs/win/Debug/sfml-main-d.lib;../lib/SFML/libs/win/Debug/sfml-system-d.lib;../lib/SFML/libs/win/Debug/sfml-window-d.lib;../lib/zlib/libs/win/Debug/zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;../lib/enet;../lib/SFML;../lib/zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../src;../lib/enet/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../src;../lib/enet/include;../lib/SFML/include;../lib/zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -135,8 +143,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../lib;../lib/enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;../lib/enet/libs/Release/enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../lib;../lib/enet;../lib/SFML;../lib/zlib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;../lib/enet/libs/win/Release/enet.lib;../lib/SFML/libs/win/Release/sfml-graphics.lib;../lib/SFML/libs/win/Release/sfml-system.lib;../lib/SFML/libs/win/Release/sfml-window.lib;../lib/zlib/libs/win/Release/zlib.lib;../lib/zlib/libs/win/Release/zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -147,6 +155,8 @@
     <ClCompile Include="BaseApp.cpp" />
     <ClCompile Include="Client\VariantSender.cpp" />
     <ClCompile Include="Client\PlayerItems.cpp" />
+    <ClCompile Include="GrowRender\FText.cpp" />
+    <ClCompile Include="GrowRender\RenderCache.cpp" />
     <ClCompile Include="Net\NetSocket.cpp" />
     <ClCompile Include="Server\ENetServer.cpp" />
     <ClCompile Include="GrowConfig.cpp" />
@@ -174,14 +184,20 @@
     <ClInclude Include="Client\LoginDetails.h" />
     <ClInclude Include="Client\PlayerItems.h" />
     <ClInclude Include="Client\VariantSender.h" />
+    <ClInclude Include="GrowRender\FText.h" />
+    <ClInclude Include="GrowRender\RenderCache.h" />
     <ClInclude Include="Net\GrowPacket.h" />
     <ClInclude Include="Net\NetSocket.h" />
     <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />
+    <ClInclude Include="Packet\Client\Generic\JoinRequestListener.h" />
+    <ClInclude Include="Packet\Client\Generic\QuitToExitListener.h" />
     <ClInclude Include="Packet\Client\LogonPacketListener.h" />
+    <ClInclude Include="Packet\Client\Tank\StateListener.h" />
     <ClInclude Include="SDK\Builders\DialogBuilder.h" />
     <ClInclude Include="SDK\Builders\WorldOffersBuilder.h" />
     <ClInclude Include="SDK\HSL.h" />
     <ClInclude Include="SDK\MD5.h" />
+    <ClInclude Include="SDK\Proton\RTTEX.h" />
     <ClInclude Include="Server\ENetServer.h" />
     <ClInclude Include="Server\PacketHandler.h" />
     <ClInclude Include="GrowConfig.h" />

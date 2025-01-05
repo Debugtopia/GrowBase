@@ -74,13 +74,15 @@ Official Contributors Credits:
 -  Caferius(Discord: caferius) - providing with cache & config files from real servers
 -  MuOdO(Discord: muodo) - providing with information over growtopia systems, and many more useful information used in this project
 
+
 Unofficial Contributors Credits:
 -  dos(Discord: datdos) - provided with some insider info, helped with variables naming and improving the code style
 -  Rebillion(Discord: rebillionz) - provided with config files, explanation for some of the keys, helped me get in the gt coding back in 2020
 
+
 Additional Credits:
--  add yourself here
--  add yourself here
+-  YoruAkio(discord: yoruakio) - helped with testing growbase's linux support
+-  kevz(discord: zkevz) - Broadcast function & gameupdatepacket struct from beef, pushed me to want to learn more about programming
 -  add yourself here
 -  add yourself here
 -  add yourself here
@@ -125,6 +127,9 @@ void   LogMsgSafe(const char* traceStr, ...);
 void   LogErrorSafe(const char* traceStr, ...);
 
 Config GetConfig();
+bool   IsBeta();
+
+
 class BaseApp
 {
 public:

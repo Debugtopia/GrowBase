@@ -28,19 +28,75 @@ if (WIN32)
     )
 
     target_link_libraries(GrowBase PRIVATE 
-        optimized ${CMAKE_SOURCE_DIR}/lib/enet/libs/Release/enet.lib
-        debug ${CMAKE_SOURCE_DIR}/lib/enet/libs/Debug/enet.lib
+        # RELEASE
+        
+        # enet
+        optimized ${CMAKE_SOURCE_DIR}/lib/enet/libs/win/Release/enet.lib
+
+        # SFML
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Release/sfml-graphics.lib
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Release/sfml-main.lib
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Release/sfml-system.lib
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Release/sfml-window.lib
+
+        # zlib
+        optimized ${CMAKE_SOURCE_DIR}/lib/zlib/libs/win/Release/zlib.lib
+        optimized ${CMAKE_SOURCE_DIR}/lib/zlib/libs/win/Release/zlibstatic.lib
+
+        # DEBUG
+
+        # enet
+        debug ${CMAKE_SOURCE_DIR}/lib/enet/libs/win/Debug/enet.lib
+
+        # SFML
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Debug/sfml-graphics-d.lib
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Debug/sfml-main-d.lib
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Debug/sfml-system-d.lib
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/win/Debug/sfml-window-d.lib
+
+        # zlib
+        debug ${CMAKE_SOURCE_DIR}/lib/zlib/libs/win/Debug/zlibd.lib
     )
 elseif (UNIX)
     target_link_libraries(GrowBase PRIVATE 
         pthread
+    )
+
+    target_link_libraries(GrowBase PRIVATE 
+        # RELEASE
+        
+        # enet
+        optimized ${CMAKE_SOURCE_DIR}/lib/enet/libs/unix/Release/enet.so
+
+        # SFML
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Release/sfml-graphics.so
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Release/sfml-main.so
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Release/sfml-system.so
+        optimized ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Release/sfml-window.so
+
+        # zlib
+        optimized ${CMAKE_SOURCE_DIR}/lib/zlib/libs/unix/Release/zlib.so
+
+        # DEBUG
+
+        # enet
+        debug ${CMAKE_SOURCE_DIR}/lib/enet/libs/unix/Debug/enet.so
+
+        # SFML
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Debug/sfml-graphics-d.so
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Debug/sfml-main-d.so
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Debug/sfml-system-d.so
+        debug ${CMAKE_SOURCE_DIR}/lib/SFML/libs/unix/Debug/sfml-window-d.so
+
+        # zlib
+        debug ${CMAKE_SOURCE_DIR}/lib/zlib/libs/unix/Debug/zlibd.so
     )
 endif()
 
 # target precompiled headers
 target_precompile_headers(GrowBase PRIVATE ${PCH_HEADER})
 
-# target definitions
+# target compiling definitions
 target_compile_definitions(GrowBase PRIVATE 
     _CRT_SECURE_NO_WARNINGS
     _WINSOCK_DEPRECATED_NO_WARNINGS

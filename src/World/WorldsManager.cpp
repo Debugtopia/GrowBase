@@ -163,6 +163,7 @@ bool WorldsManager::Enter(GameClient * pClient, const char * fName, CL_Vec2f spa
 		spawnPoint = pWorld->GetWorldTileMap()->GetSpawnPoint();
 	}
 
+	pWorld->AddClient(pClient);
 	pClient->SetWorld(pWorld);
 	pClient->SetNetID(pWorld->GetNetID(true));
 	pClient->SetPosition(spawnPoint.X, spawnPoint.Y);
@@ -249,4 +250,54 @@ bool WorldsManager::Enter(GameClient * pClient, const char * fName, CL_Vec2f spa
 	}
 
 	return true;
+}
+
+void WorldsManager::Exit(GameClient* pClient, const bool& bShowWorldOffers)
+{
+	if (pClient == NULL)
+	{
+		// client was null
+		return;
+	}
+
+	World * pWorld = pClient->GetWorld();
+	if (pWorld == NULL)
+	{
+		// isn't in world
+		return;
+	}
+
+	// removing avatar
+	pWorld->Broadcast([&](GameClient * pPlayer) {
+		VariantSender::OnRemove(pPlayer, pClient->GetNetID(), pClient->GetUserID());
+
+		if (pPlayer != pClient && true /* check if player has invis flag on */)
+		{
+			VariantSender::OnTalkBubble(pPlayer, pClient->GetNetID(), "`5<`w" + pClient->GetDisplayName() + "`` left, `w" + std::to_string(pWorld->GetPlayersCount() - 1) + "`` others here>``");
+			VariantSender::OnConsoleMessage(pPlayer, "`5<`w" + pClient->GetDisplayName() + "`` left, `w" + std::to_string(pWorld->GetPlayersCount() - 1) + "`` others here>``");
+			pPlayer->SendPacket(NET_MESSAGE_GAME_MESSAGE, "action|play_sfx\nfile|audio/door_close.wav\ndelayMS|0");
+		}
+	});
+
+	pWorld->RemoveClient(pClient);
+	if (pWorld->GetClients().size() < 1)
+	{
+		// world is inactive	
+		pWorld->SetNetID(0);
+		// pWorld->SaveToDB();
+
+		// TODO: push to cache & remove from activeWorlds
+	}
+
+	if (bShowWorldOffers)
+	{
+		// show world offers if option is enabled
+		if (IsBeta())
+		{
+			// beta server message
+			pClient->SendLog(GetConfig().betaMsg.c_str());
+		}
+
+		SendWorldOffers(pClient, true);
+	}
 }

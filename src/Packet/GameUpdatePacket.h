@@ -106,7 +106,7 @@ enum eGamePacketFlags
 #pragma pack(push, 1)
 
 // packet structure taken from beef - thanks to kevz
-typedef struct gameupdatepacket_t
+struct GameUpdatePacket
 {
 	//offset 0
 	uint8_t type = 0;
@@ -175,9 +175,9 @@ typedef struct gameupdatepacket_t
 	//offset 16
 	union
 	{
-		float   fVar = 0;
-		float   waterSpeed;
-		float   objectAltCount;
+		float fVar = 0;
+		float waterSpeed;
+		float objectAltCount;
 	};
 
 	//offset 20
@@ -201,54 +201,54 @@ typedef struct gameupdatepacket_t
 	//offset 24
 	union
 	{
-		float   vecX = 0;
-		float   posX;
-		float   accel;
-		float   punchRangeIn;
+		float vecX = 0;
+		float posX;
+		float accel;
+		float punchRangeIn;
 	};
 
 	//offset 28
 	union
 	{
-		float   vecY = 0;
-		float   posY;
-		float   buildRangeIn;
-		float   punchStrength;
+		float vecY = 0;
+		float posY;
+		float buildRangeIn;
+		float punchStrength;
 	};
 
 	//offset 32
 	union
 	{
-		float   vec2X = 0;
-		float   destX;
-		float   gravityIn;
-		float   speedOut;
-		float   velocityX;
-		float   particleSize;
-		float   pos2X;
-		int     hackType;
+		float vec2X = 0;
+		float destX;
+		float gravityIn;
+		float speedOut;
+		float velocityX;
+		float particleSize;
+		float pos2X;
+		int hackType;
 	};
 
 	//offset 36
 	union
 	{
-		float   vec2Y = 0;
-		float   destY;
-		float   speedIn;
-		float   gravityOut;
-		float   velocityY;
-		float   particleAltID;
-		float   pos2Y;
-		int     hackType2;
+		float vec2Y = 0;
+		float destY;
+		float speedIn;
+		float gravityOut;
+		float velocityY;
+		float particleAltID;
+		float pos2Y;
+		int hackType2;
 	};
 
 	//offset 40
 	union
 	{
-		float   particleRotation = 0;
-		float   npcSpeed;
-		float   npcVariable;
-		float   notRemovingItem;
+		float particleRotation = 0;
+		float npcSpeed;
+		float npcVariable;
+		float notRemovingItem;
 	};
 
 	//offset 44
@@ -276,13 +276,15 @@ typedef struct gameupdatepacket_t
 	};
 
 	//offset 52
-	uint32_t     dataLength = 0;
-	
-	//offset 56
-	uint8_t      data[];
-} GameUpdatePacket;
+	uint32_t dataLength = 0;
 
-static uint8_t * GetExtendedDataPointerFromTankPacket(gameupdatepacket_t packet)
+	//offset 56
+	uint8_t data[];
+};
+
+#pragma pack(pop)
+
+static uint8_t * GetExtendedDataPointerFromTankPacket(GameUpdatePacket packet)
 {
 	if (packet.data == NULL)
 	{
@@ -291,20 +293,5 @@ static uint8_t * GetExtendedDataPointerFromTankPacket(gameupdatepacket_t packet)
 
 	return packet.data;
 }
-
-typedef struct playermoving_t
-{
-	int     offsetID = 0;
-	int     netID = 0;
-	int32_t flags = 0;
-
-	float   startX = 0.f;
-	float   startY = 0.f;
-
-	float   destX = 0.f;
-	float   destY = 0.f;
-} PlayerMoving;
-
-#pragma pack(pop)
 
 #endif GAMEUPDATEPACKET_H

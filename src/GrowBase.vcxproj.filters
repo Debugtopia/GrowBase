@@ -29,6 +29,8 @@
     <ClCompile Include="World\WorldObjectMap.cpp" />
     <ClCompile Include="World\TileExtra.cpp" />
     <ClCompile Include="World\TileExtraManager.cpp" />
+    <ClCompile Include="GrowRender\FText.cpp" />
+    <ClCompile Include="GrowRender\RenderCache.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
@@ -68,5 +70,11 @@
     <ClInclude Include="World\WorldObjectMap.h" />
     <ClInclude Include="World\TileExtra.h" />
     <ClInclude Include="World\TileExtraManager.h" />
+    <ClInclude Include="GrowRender\FText.h" />
+    <ClInclude Include="GrowRender\RenderCache.h" />
+    <ClInclude Include="SDK\Proton\RTTEX.h" />
+    <ClInclude Include="Packet\Client\Tank\StateListener.h" />
+    <ClInclude Include="Packet\Client\Generic\JoinRequestListener.h" />
+    <ClInclude Include="Packet\Client\Generic\QuitToExitListener.h" />
   </ItemGroup>
 </Project>

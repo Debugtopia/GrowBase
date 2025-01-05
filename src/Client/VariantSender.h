@@ -18,6 +18,7 @@ public:
 	static void OnConsoleMessage(GameClient * pClient, const nova_str& msg, const int& netID = -1, const int& delayMS = 0);
 	static void OnRequestWorldSelectMenu(GameClient * pClient, const nova_str& menuString, const int& netID = -1, const int& delayMS = 0);
 	static void OnSpawn(GameClient * pClient, const nova_str& spawnData, const int& netID = -1, const int& delayMS = -1);
+	static void OnRemove(GameClient* pClient, const int& netID = -1, const int& userID = -1, const int& delayMS = -1);
 	static void OnTalkBubble(GameClient * pClient, const int& playerNetID, const nova_str& text, const u8& bubbleType = 0, const bool& bOverrideOld = false, const int& netID = -1, const int& delayMS = 0);
 	static void OnDialogRequest(GameClient * pClient, const nova_str& menuString, const int& netID = -1, const int& delayMS = 0);
 };

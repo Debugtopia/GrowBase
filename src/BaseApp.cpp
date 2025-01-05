@@ -199,6 +199,11 @@ Config GetConfig()
 	return GetBaseApp()->GetConfig();
 }
 
+bool IsBeta()
+{
+	return GetConfig().bBetaServer;
+}
+
 void BaseApp::Init()
 {
 	// setting up our server

@@ -184,6 +184,36 @@ void World::Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide, 
 	MemorySerializeRaw(m_baseWeather, pData, memOffset, true);
 }
 
+void World::AddClient(GameClient * pClient)
+{
+	if (pClient == NULL)
+	{
+		// client was null
+		return;
+	}
+
+	auto it = std::find(m_clients.begin(), m_clients.end(), pClient);
+	if (it != m_clients.end())
+	{
+		m_clients.emplace_back(pClient);
+	}
+}
+
+void World::RemoveClient(GameClient * pClient)
+{
+	if (pClient == NULL)
+	{
+		// client was null
+		return;
+	}
+
+	auto it = std::find(m_clients.begin(), m_clients.end(), pClient);
+	if (it != m_clients.end())
+	{
+		m_clients.erase(it);
+	}
+}
+
 void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdatePacket * pPacket)
 {
 	if (pClient == NULL || pPacket == NULL)
@@ -216,6 +246,13 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 	if (pItemInfo->ID == 0)
 	{
 		// tile does not exist - what did you expect to punch, lmao...
+		return;
+	}
+
+	if (pClient->GetHitPower() == 0)
+	{
+		// dividing with 0 will cause crash
+		// what the fuck is this shit
 		return;
 	}
 
@@ -313,12 +350,15 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 	    }
 	}
 
+		
 	pPacket->type = NET_GAME_PACKET_TILE_APPLY_DAMAGE;
 	pPacket->netID = pClient->GetNetID();
 	pPacket->tileDamage = pClient->GetHitPower();
 
+
 	pTile->SetDamage(pTile->GetDamage() + pClient->GetHitPower());
 	pTile->DamageTick = nova_clock::now();
+
 
 	// checking if tile was broken or not
 	if (pTile->GetDamage() >= pItemInfo->hardness) 
@@ -430,7 +470,7 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 	}
 
 	Broadcast([&](GameClient * pPlayer) {
-		pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength);
+		pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
 	});
 }
 
