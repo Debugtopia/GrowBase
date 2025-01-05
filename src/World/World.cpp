@@ -193,7 +193,7 @@ void World::AddClient(GameClient * pClient)
 	}
 
 	auto it = std::find(m_clients.begin(), m_clients.end(), pClient);
-	if (it != m_clients.end())
+	if (it == m_clients.end())
 	{
 		m_clients.emplace_back(pClient);
 	}
@@ -214,7 +214,7 @@ void World::RemoveClient(GameClient * pClient)
 	}
 }
 
-void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdatePacket * pPacket)
+void World::HandlePacketTileChangeRequestPunch(GameClient* pClient, GameUpdatePacket* pPacket)
 {
 	if (pClient == NULL || pPacket == NULL)
 	{
@@ -228,15 +228,16 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 		return;
 	}
 
-	CL_Vec2f interactedAt = { (float)pPacket->intX, (float)pPacket->intY };
-	Tile * pTile = m_pWorldTileMap->GetTile(interactedAt);
+	int tileX = pPacket->intX;
+	int tileY = pPacket->intY;
+	Tile *pTile = m_pWorldTileMap->GetTile(tileX, tileY);
 	if (pTile == NULL)
 	{
 	    // tile was not found
 		return;
 	}
 
-	ItemInfo * pItemInfo = pTile->GetItemInfo();
+	ItemInfo *pItemInfo = pTile->GetItemInfo();
 	if (pItemInfo == NULL)
 	{
 		// item info was not found
@@ -265,7 +266,7 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 
 	if (pItemInfo->editableTypes & MOD)
 	{
-		std::string msg = "It's too strong to break.";
+		nova_str msg = "It's too strong to break.";
 		if (pItemInfo->type == TYPE_MAIN_DOOR)
 		{
 			msg = "(stand over and punch to use)";
@@ -293,7 +294,7 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 					ToggleBit(WORLDBIT_JAMMED, pTile->HasFlag(TILEFLAG_ENABLED));
 					nova_str status = pTile->HasFlag(TILEFLAG_ENABLED) ? "`4hidden``" : "`2visible``";
 					
-					Broadcast([&](GameClient * pPlayer) {
+					Broadcast([&](GameClient* pPlayer) {
 						pPlayer->SendVariantPacket({ "OnConsoleMessage", "Signal Jammer enabled. This world is now " + status + " from the universe."});
 					});
 					break;
@@ -350,11 +351,12 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 	    }
 	}
 
-		
-	pPacket->type = NET_GAME_PACKET_TILE_APPLY_DAMAGE;
-	pPacket->netID = pClient->GetNetID();
-	pPacket->tileDamage = pClient->GetHitPower();
-
+	GameUpdatePacket damage{};
+	damage.type = NET_GAME_PACKET_TILE_APPLY_DAMAGE;
+	damage.netID = pClient->GetNetID();
+	damage.tileX = tileX;
+	damage.tileY = tileY;
+	damage.tileDamage = pClient->GetHitPower();
 
 	pTile->SetDamage(pTile->GetDamage() + pClient->GetHitPower());
 	pTile->DamageTick = nova_clock::now();
@@ -446,7 +448,7 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 					}
 					else
 					{
-						Broadcast([&](GameClient * pPlayer) { 
+						Broadcast([&](GameClient* pPlayer) { 
 							pPlayer->SendVariantPacket({ "OnParticleEffect", 125, CL_Vec2f(spawnX, spawnY), 0.0f, 0.0f }); 
 						});
 					}
@@ -467,14 +469,17 @@ void World::HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdateP
 		{
 			pTile->SetForeground(ITEM_ID_BLANK);
 		}
+
+		Broadcast([&](GameClient* pPlayer) {
+		    pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
+	    });
+		return;
 	}
 
-	Broadcast([&](GameClient * pPlayer) {
-		pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
-	});
+	pClient->SendPacketRaw(NET_MESSAGE_GAME_PACKET, &damage, sizeof(GameUpdatePacket), ENET_PACKET_FLAG_RELIABLE);
 }
 
-void World::HandlePacketTileChangeRequestPlace(GameClient * pClient, GameUpdatePacket * pPacket, ItemInfo * pItemInfo)
+void World::HandlePacketTileChangeRequestPlace(GameClient* pClient, GameUpdatePacket* pPacket, ItemInfo* pItemInfo)
 {
 	if (pClient == NULL || pPacket == NULL || pItemInfo == NULL)
 	{
@@ -488,12 +493,12 @@ void World::HandlePacketTileChangeRequestPlace(GameClient * pClient, GameUpdateP
 		return;
 	}
 
-	Broadcast([&](GameClient * pPlayer) {
+	Broadcast([&](GameClient* pPlayer) {
 		pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
 	});
 }
 
-void World::HandlePacketTileChangeRequestConsume(GameClient * pClient, GameUpdatePacket * pPacket, ItemInfo * pItemInfo)
+void World::HandlePacketTileChangeRequestConsume(GameClient* pClient, GameUpdatePacket* pPacket, ItemInfo* pItemInfo)
 {
 	if (pClient == NULL || pPacket == NULL || pItemInfo == NULL)
 	{
@@ -507,7 +512,7 @@ void World::HandlePacketTileChangeRequestConsume(GameClient * pClient, GameUpdat
 		return;
 	}
 
-	Broadcast([&](GameClient * pPlayer) {
+	Broadcast([&](GameClient* pPlayer) {
 		pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
 	});
 }

@@ -18,6 +18,8 @@ target_include_directories(GrowBase PRIVATE
     .
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/lib/enet/include
+    ${CMAKE_SOURCE_DIR}/lib/SFML/include
+    ${CMAKE_SOURCE_DIR}/lib/zlib
 )
 
 # library files

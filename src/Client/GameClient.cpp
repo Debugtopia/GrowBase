@@ -344,16 +344,14 @@ void GameClient::SendPacketRaw(eNetMessageType messageType, const void* pRawData
 	// default value of packetFlags is ENET_PACKET_FLAG_RELIABLE
 	if (m_pConnectionPeer == NULL || m_pConnectionPeer->state != ENET_PEER_STATE_CONNECTED)
 	{
-		// enet connection is null or it's state is not connected to our server, therefore we cannot send the packet
 		return;
 	}
 
-	// this is the packet we send to the game client
 	ENetPacket * pClientPacket = enet_packet_create(NULL, 5 + packetLen, packetFlags);
 	int memoffset = 0;
+	
 	if (pClientPacket == NULL)
 	{
-		// failed to create packet, so it would crash if we procceed writing stuff into it
 		return;
 	}
 
@@ -362,13 +360,11 @@ void GameClient::SendPacketRaw(eNetMessageType messageType, const void* pRawData
 	pClientPacket->data[packetLen + 4] = 0;
 	if (pRawData != NULL)
 	{
-		// null check to prevent crash upon copying the packet data to the packet's data
 		std::memcpy(pClientPacket->data + 4, pRawData, packetLen);
 	}
 
 	if (enet_peer_send(m_pConnectionPeer, 0, pClientPacket) != 0)
 	{
-		// destroying the packet incase it was not sent to the client
 		enet_packet_destroy(pClientPacket);
 	}
 }

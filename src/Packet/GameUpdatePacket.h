@@ -255,7 +255,7 @@ struct GameUpdatePacket
 	union
 	{
 		uint32_t intX = 0;
-		uint32_t tilePosX;
+		uint32_t tileX;
 		uint32_t itemAltID;
 		uint32_t hairColor;
 		uint32_t npcTargetID;
@@ -267,7 +267,7 @@ struct GameUpdatePacket
 	union
 	{
 		uint32_t intY = 0;
-		uint32_t tilePosY;
+		uint32_t tileY;
 		uint32_t itemCount;
 		uint32_t eyeColor;
 		uint32_t particleSizeAlt;

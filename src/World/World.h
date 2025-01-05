@@ -114,10 +114,10 @@ public:
 	void                              RemoveClient(GameClient * pClient);
 
 	// Tile change requests
-	void                              HandlePacketTileChangeRequestPunch(GameClient * pClient, GameUpdatePacket * pPacket);
-	void                              HandlePacketTileChangeRequestPlace(GameClient * pClient, GameUpdatePacket * pPacket, ItemInfo * pItemInfo);
-	void                              HandlePacketTileChangeRequestConsume(GameClient * pClient, GameUpdatePacket * pPacket, ItemInfo * pItemInfo);
-	void                              HandlePacketTileChangeRequestWrench(GameClient * pClient, GameUpdatePacket * pPacket);
+	void                              HandlePacketTileChangeRequestPunch(GameClient* pClient, GameUpdatePacket* pPacket);
+	void                              HandlePacketTileChangeRequestPlace(GameClient* pClient, GameUpdatePacket* pPacket, ItemInfo* pItemInfo);
+	void                              HandlePacketTileChangeRequestConsume(GameClient* pClient, GameUpdatePacket* pPacket, ItemInfo* pItemInfo);
+	void                              HandlePacketTileChangeRequestWrench(GameClient* pClient, GameUpdatePacket* pPacket);
 
 private:
 	int                               m_ID = -1;
