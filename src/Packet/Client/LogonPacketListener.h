@@ -9,7 +9,7 @@ namespace GrowPacketsListener
 {
 	// guest / non-registered account logon handler
 	// > used for accounts with names such as Buddy_123
-	void OnHandleGuestLogon(GameClient* pClient, const nova_str& textPacket)
+	void OnHandleGuestLogon(GameClient* pClient, const nova_str& text_data)
 	{
 		if (pClient == NULL)
 		{
@@ -18,7 +18,7 @@ namespace GrowPacketsListener
 		}
 
 		TextScanner t;
-		t.SetupFromMemoryAddress(textPacket.c_str());
+		t.SetupFromMemoryAddress(text_data.c_str());
 		pClient->GetLoginDetails()->platformID = t.GetParmString("platformID", 1);
 		pClient->GetLoginDetails()->requestedName = t.GetParmString("requestedName", 1);
 		pClient->GetLoginDetails()->country = t.GetParmString("country", 1);
@@ -47,7 +47,7 @@ namespace GrowPacketsListener
 
 	// growid / egistered account logon handler
 	// > used for registered accounts
-	void OnHandleGrowIDLogon(GameClient* pClient, const nova_str& textPacket)
+	void OnHandleGrowIDLogon(GameClient* pClient, const nova_str& text_data)
 	{
 		if (pClient == NULL)
 		{
@@ -56,7 +56,7 @@ namespace GrowPacketsListener
 		}
 
 		TextScanner t;
-		t.SetupFromMemoryAddress(textPacket.c_str());
+		t.SetupFromMemoryAddress(text_data.c_str());
 		pClient->GetLoginDetails()->platformID = t.GetParmString("platformID", 1);
 		pClient->GetLoginDetails()->requestedName = t.GetParmString("requestedName", 1);
 		pClient->GetLoginDetails()->tankIDName = t.GetParmString("tankIDName", 1);
@@ -90,7 +90,7 @@ namespace GrowPacketsListener
 
 	// legacy users / egistered account logon handler
 	// > used for registered accounts using 4.61+ client game version
-	void OnHandleTokenLogon(GameClient* pClient, const nova_str& textPacket)
+	void OnHandleTokenLogon(GameClient* pClient, const nova_str& text_data)
 	{
 		if (pClient == NULL)
 		{
@@ -99,7 +99,7 @@ namespace GrowPacketsListener
 		}
 
 		TextScanner t;
-		t.SetupFromMemoryAddress(textPacket.c_str());
+		t.SetupFromMemoryAddress(text_data.c_str());
 
 		nova_str login_token = t.GetParmString("ltoken", 1);
 		nova_str token_decypher = base64_decode(login_token);

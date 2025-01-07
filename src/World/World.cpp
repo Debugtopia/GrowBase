@@ -351,12 +351,9 @@ void World::HandlePacketTileChangeRequestPunch(GameClient* pClient, GameUpdatePa
 	    }
 	}
 
-	GameUpdatePacket damage{};
-	damage.type = NET_GAME_PACKET_TILE_APPLY_DAMAGE;
-	damage.netID = pClient->GetNetID();
-	damage.tileX = tileX;
-	damage.tileY = tileY;
-	damage.tileDamage = pClient->GetHitPower();
+	pPacket->type = NET_GAME_PACKET_TILE_APPLY_DAMAGE;
+	pPacket->netID = pClient->GetNetID();
+	pPacket->tileDamage = pClient->GetHitPower();
 
 	pTile->SetDamage(pTile->GetDamage() + pClient->GetHitPower());
 	pTile->DamageTick = nova_clock::now();
@@ -469,14 +466,11 @@ void World::HandlePacketTileChangeRequestPunch(GameClient* pClient, GameUpdatePa
 		{
 			pTile->SetForeground(ITEM_ID_BLANK);
 		}
-
-		Broadcast([&](GameClient* pPlayer) {
-		    pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
-	    });
-		return;
 	}
 
-	pClient->SendPacketRaw(NET_MESSAGE_GAME_PACKET, &damage, sizeof(GameUpdatePacket), ENET_PACKET_FLAG_RELIABLE);
+	Broadcast([&](GameClient* pPlayer) {
+		pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pPacket, sizeof(GameUpdatePacket) + pPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
+	});
 }
 
 void World::HandlePacketTileChangeRequestPlace(GameClient* pClient, GameUpdatePacket* pPacket, ItemInfo* pItemInfo)

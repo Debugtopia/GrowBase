@@ -76,5 +76,6 @@
     <ClInclude Include="Packet\Client\Tank\StateListener.h" />
     <ClInclude Include="Packet\Client\Generic\JoinRequestListener.h" />
     <ClInclude Include="Packet\Client\Generic\QuitToExitListener.h" />
+    <ClInclude Include="Packet\Client\Generic\Menu\GameHelperListener.h" />
   </ItemGroup>
 </Project>

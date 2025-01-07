@@ -175,14 +175,22 @@ private:
 	ENetPeer            *m_pConnectionPeer = NULL; // the connection peer
 	World               *m_pWorld = NULL; // the world pointer we are located in
 
+
+
 	LoginDetails        m_loginDetails; // logon packet's details are stored there
 	PlayerItems         m_items; // class containing items, netavatar stuff, skin colors, inventory, ...
 
+
+
 	nova_str            m_nameOverride = ""; // nickname, set by using /nick as a moderator, manages PLAYER_FLAG_UNDERCOVER bit flag
+
+
 
 	int                 m_userID = 0; // non-changeable account user ID
 	int                 m_onlineID = 0; // temporal online ID
 	int                 m_accountID = 100; // account ID(-1 if account isn't a guest)
+
+
 
 	// NetAvatar stuff
 	int                 m_netID = 0; // temporal net ID for worlds
@@ -190,6 +198,8 @@ private:
 	CL_Vec2f            m_respawnVec = CL_Vec2f(0.f, 0.f);
 
 	uint8_t             m_hitPower = 6; // the damage we apply to the tile upon punch, modified by player mods
+	
+
 
 	// CharacterState state
 	uint32_t            m_hairColor = MAKE_RGBA(255, 255, 255, 255);
