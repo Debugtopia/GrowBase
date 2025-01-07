@@ -72,12 +72,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\bin\out</OutDir>
-    <IntDir>$(SolutionDir)..\bin\out\cache</IntDir>
+    <OutDir>$(SolutionDir)..\bin\out\</OutDir>
+    <IntDir>$(SolutionDir)..\bin\out\cache\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\bin\out</OutDir>
-    <IntDir>$(SolutionDir)..\bin\out\cache</IntDir>
+    <OutDir>$(SolutionDir)..\bin\out\</OutDir>
+    <IntDir>$(SolutionDir)..\bin\out\cache\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -190,6 +190,7 @@
     <ClInclude Include="Net\NetSocket.h" />
     <ClInclude Include="Packet\Client\Generic\EnterGameListener.h" />
     <ClInclude Include="Packet\Client\Generic\JoinRequestListener.h" />
+    <ClInclude Include="Packet\Client\Generic\Menu\GameHelperListener.h" />
     <ClInclude Include="Packet\Client\Generic\QuitToExitListener.h" />
     <ClInclude Include="Packet\Client\LogonPacketListener.h" />
     <ClInclude Include="Packet\Client\Tank\StateListener.h" />

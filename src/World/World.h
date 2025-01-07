@@ -107,7 +107,7 @@ public:
 
 	// fn
 	void                              Serialize(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const float& fClientVersion = 2.998f, const uint16_t& worldMapVersion = 5);
-    void                              Load(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const uint16_t& worldMapVersion = 5);
+    //void                              Load(uint8_t * pData, int& memOffset, const bool& bClientSide = true, const uint16_t& worldMapVersion = 5);
 
 
 	void                              AddClient(GameClient * pClient);
@@ -128,7 +128,7 @@ private:
 
 	WorldTileMap                      *m_pWorldTileMap = NULL; // world tile map
 	WorldObjectMap                    *m_pWorldObjectMap = NULL; // world object map
-	std::vector<GameClient*>          m_clients;
+	std::vector<GameClient*>          m_clients{};
 
 	int                               m_activeWeather = 4; // active weather machine ID in the world
 	int                               m_baseWeather = 4; // weather machine ID that it resets to after deactivating the active one

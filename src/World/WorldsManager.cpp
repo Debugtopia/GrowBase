@@ -217,7 +217,6 @@ bool WorldsManager::Enter(GameClient * pClient, const char * fName, CL_Vec2f spa
 
 		pClient->SendVariantPacket({ "OnFlagMay2019", 256 }, pPlayer->GetNetID());
 		pPlayer->SendVariantPacket({ "OnFlagMay2019", 256 }, pClient->GetNetID());
-
 		if (true /* check if pClient has invisible flag on */)
 		{
 			pClient->SendPacket(NET_MESSAGE_GAME_MESSAGE, "action|play_sfx\nfile|audio/door_open.wav\ndelayMS|0");

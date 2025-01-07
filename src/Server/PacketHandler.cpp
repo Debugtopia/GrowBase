@@ -11,6 +11,9 @@
 #include <Packet/Client/Generic/JoinRequestListener.h>
 #include <Packet/Client/Generic/QuitToExitListener.h>
 
+// menu
+#include <Packet/Client/Generic/Menu./GameHelperListener.h>
+
 // tank update packets
 #include <Packet/Client/Tank/StateListener.h>
 
@@ -57,7 +60,7 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 
 			memset(pPacket->data + pPacket->dataLength - 1, 0, 1);
 			// this is the text packet data the client sends
-			nova_str textPacket = (const char*)pPacket->data + 4;
+			const nova_str& text_data = (const char*)pPacket->data + 4;
 			GameClient *pClient = (GameClient*)pConnectionPeer->data;
 			if (pClient == NULL)
 			{
@@ -66,32 +69,32 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 				return;
 			}
 
-			printf("%s\n", textPacket.c_str());
-			if (textPacket.starts_with("requestedName"))
+			printf("%s\n", text_data.c_str());
+			if (text_data.starts_with("requestedName"))
 			{
 				// this is the text packet guest(non-registered) accounts send when logging in
-				GrowPacketsListener::OnHandleGuestLogon(pClient, textPacket);
+				GrowPacketsListener::OnHandleGuestLogon(pClient, text_data);
 				return;
 			}
 
-			if (textPacket.starts_with("tankIDName"))
+			if (text_data.starts_with("tankIDName"))
 			{
 				// this is the text packet registered accounts send when logging in
-				GrowPacketsListener::OnHandleGrowIDLogon(pClient, textPacket);
+				GrowPacketsListener::OnHandleGrowIDLogon(pClient, text_data);
 				return;
 			}
 
-			if (textPacket.starts_with("protocol|") && textPacket.find("ltoken|") != std::string::npos)
+			if (text_data.starts_with("protocol|") && text_data.find("ltoken|") != std::string::npos)
 			{
 				// in 4.61 version, ubisoft decided to make token-based login system to support external logins such as steam, google
 				// the ltoken is the login token containing the login packet info
 				// ^ the token is cyphered with base64, so to get the login packet info we must decypher it
 
-				GrowPacketsListener::OnHandleTokenLogon(pClient, textPacket);
+				GrowPacketsListener::OnHandleTokenLogon(pClient, text_data);
 				return;
 			}
 
-			if (textPacket.starts_with("action|refresh_item_data"))
+			if (text_data.starts_with("action|refresh_item_data"))
 			{
 				if (pClient == NULL)
 				{
@@ -114,9 +117,15 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 				return;
 			}
 
-			if (textPacket.starts_with("action|enter_game"))
+			if (text_data.starts_with("action|enter_game"))
 			{
 				GrowPacketsListener::OnHandleGameEnter(pClient);
+				return;
+			}
+
+			if (text_data.starts_with("action|helpmenu"))
+			{
+				GrowPacketsListener::OnHandleGameHelper(pClient, text_data.c_str());
 				return;
 			}
 
@@ -147,7 +156,7 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 
 			memset(pPacket->data + pPacket->dataLength - 1, 0, 1);
 			// this is the text packet data the client sends
-			nova_str textPacket = (const char*)pPacket->data + 4;
+			const nova_str& text_data = (const char*)pPacket->data + 4;
 			GameClient* pClient = (GameClient*)pConnectionPeer->data;
 			if (pClient == NULL)
 			{
@@ -156,26 +165,26 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 				return;
 			}
 
-			printf("%s\n", textPacket.c_str());
-			if (textPacket == "action|quit")
+			printf("%s\n", text_data.c_str());
+			if (text_data == "action|quit")
 			{
 				// client disconnects from the server instantly
 				enet_peer_disconnect_later(pConnectionPeer, 0U);
 				return;
 			}
 
-			if (textPacket.starts_with("action|world_button"))
+			if (text_data.starts_with("action|world_button"))
 			{
 				// world categories in main menu
 				// in 3.xx, ubisoft changed the menu, fortunarely for us, we will handle both of them based on client's version :)
 			}
 
-			if (textPacket.starts_with("action|join_request"))
+			if (text_data.starts_with("action|join_request"))
 			{
-				GrowPacketsListener::OnHandleJoinRequest(pClient, textPacket.c_str());
+				GrowPacketsListener::OnHandleJoinRequest(pClient, text_data.c_str());
 			}
 
-			if (textPacket.starts_with("action|quit_to_exit"))
+			if (text_data.starts_with("action|quit_to_exit"))
 			{
 				GrowPacketsListener::OnHandleExit(pClient);
 			}
@@ -190,8 +199,8 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 				// game client may be null
 				// packet data may be null
 				// packet may not have the lengths we support
-
 				// in this case we cannot procceed handling the incoming packet
+				
 				LogError("failed to proccess incoming NET_MESSAGE_GAME_PACKET packet, size mismatch.");
 				return;
 			}
@@ -225,6 +234,24 @@ void PacketHandler::HandleIncomingClientPacket(ENetPeer* pConnectionPeer, ENetPa
 			        TankPacketsListener::OnHandleStatePacket(pClient, pTankPacket);
 					return;
 			    }
+
+				case NET_GAME_PACKET_UPDATE_STATUS:
+				{
+					World * pWorld = pClient->GetWorld();
+					if (pWorld == NULL)
+					{
+						// world was null
+						return;
+					}
+
+					// this packet type just needs it's netID modified, broadcasted, it shows the "chatting bubble", "BRB" bubble above the character when received
+					pTankPacket->netID = pClient->GetNetID();
+
+					pWorld->Broadcast([&](GameClient * pPlayer) {
+						pPlayer->SendPacketRaw(NET_MESSAGE_GAME_PACKET, pTankPacket, sizeof(GameUpdatePacket) + pTankPacket->dataLength, ENET_PACKET_FLAG_RELIABLE);
+					});
+					break;
+				}
 
 				case NET_GAME_PACKET_TILE_CHANGE_REQUEST:
 				{

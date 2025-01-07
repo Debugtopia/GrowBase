@@ -148,9 +148,9 @@ static std::string EncryptItemNameString(const std::string& num, const uint32_t&
     constexpr std::string_view key{ "PBG892FXX982ABC*" };
     std::string ret(num.size(), 0);
 
-    for (uint32_t i = 0; i < num.size(); i++)
+    for (int i = 0; i < num.size(); i++)
     {
-        ret[i] = static_cast<char>(num[i] ^ key[(i + cryptID) % key.size()]);
+        ret[i] = static_cast<char>(num[i] ^ key[(size_t)((size_t)i + (size_t)cryptID) % key.size()]);
     }
 
     return ret;

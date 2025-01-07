@@ -31,14 +31,14 @@ public:
 	{
 		m_width = 100;
 		m_height = 60;
-		m_tiles.resize(m_width * m_height);
+		m_tiles.resize(static_cast<size_t>(m_width * m_height));
 	}
 
 	WorldTileMap(const uint8_t& width = 100, const uint8_t& height = 60)
 	{
 		m_width = width;
 		m_height = height;
-		m_tiles.resize(m_width * m_height);
+		m_tiles.resize(static_cast<size_t>(m_width * m_height));
 	}
 
 	~WorldTileMap() = default;

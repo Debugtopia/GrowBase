@@ -8,7 +8,7 @@
 namespace GrowPacketsListener
 {
 	// sends the client the world selection menu & gazette
-	void OnHandleJoinRequest(GameClient* pClient, const char * pTextData)
+	void OnHandleJoinRequest(GameClient* pClient, const char * pChar)
 	{
 		if (pClient == NULL)
 		{
@@ -17,7 +17,7 @@ namespace GrowPacketsListener
 		}
 
 		TextScanner t;
-        t.SetupFromMemoryAddress(pTextData);
+        t.SetupFromMemoryAddress(pChar);
         nova_str world_name = Utils::StringUppercase(t.GetParmString("name", 1));
         nova_str world_to_enter = world_name;
         if (world_name.empty())
@@ -45,6 +45,7 @@ namespace GrowPacketsListener
         }
 
         GetWorldsManager()->Enter(pClient, world_to_enter.c_str());
+		t.Kill();
 	}
 
 } // namespace GrowPacketsListener
