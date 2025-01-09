@@ -1,3 +1,7 @@
+# Ignore files
+bin/out
+bin/log.*
+
 # Prerequisites
 *.d
 
